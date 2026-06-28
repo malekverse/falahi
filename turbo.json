@@ -1,5 +1,24 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_APP_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "META_WA_PHONE_NUMBER_ID",
+    "META_WA_ACCESS_TOKEN",
+    "META_WA_WEBHOOK_VERIFY_TOKEN",
+    "META_WA_APP_SECRET",
+    "GROQ_API_KEY",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "STT_PROVIDER",
+    "LLM_PROVIDER",
+    "AI_CONFIDENCE_THRESHOLD",
+    "PLATFORM_COMMISSION_RATE",
+    "GPS_STALE_THRESHOLD_MINUTES",
+    "HUB_GEOFENCE_RADIUS_METERS"
+  ],
   "tasks": {
     "build": { "dependsOn": ["^build"], "outputs": [".next/**", "dist/**"] },
     "dev": { "cache": false, "persistent": true },
