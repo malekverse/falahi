@@ -1,0 +1,20 @@
+[project]
+name = "filahi"
+id = ""
+
+[auth]
+enabled = true
+smtp_admin_email = "admin@filahi.tn"
+smtp_sender_name = "Filahi"
+external_phone_enabled = true
+
+[auth.settings]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/**"]
+
+[storage]
+enabled = true
+
+[storage.buckets]
+farmer_media = { public = false, file_size_limit = "5MB", allowed_mime_types = ["image/jpeg", "image/png", "audio/ogg"] }
+driver_documents = { public = false, file_size_limit = "10MB", allowed_mime_types = ["image/jpeg", "image/png"] }

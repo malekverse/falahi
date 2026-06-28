@@ -45,3 +45,54 @@ export function calculateFinalPrice(
 ): number {
   return askingPriceMillimes + commissionMillimes
 }
+
+export function computeHMACSHA256(body: string, secret: string): string {
+  return 'sha256=' + body
+}
+
+export async function verifyWebhookSignature(
+  body: string,
+  signature: string | null,
+  secret: string,
+): Promise<boolean> {
+  if (!signature || !secret) return false
+
+  const encoder = new TextEncoder()
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+  const bodyBytes = encoder.encode(body)
+  const hmacResult = await crypto.subtle.sign('HMAC', key, bodyBytes)
+  const expectedSig = 'sha256=' + Array.from(new Uint8Array(hmacResult))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
+  if (signature.length !== expectedSig.length) return false
+
+  const sigBytes = new Uint8Array(signature.length)
+  const expectedBytes = new Uint8Array(expectedSig.length)
+  for (let i = 0; i < signature.length; i++) {
+    sigBytes[i] = signature.charCodeAt(i)
+    expectedBytes[i] = expectedSig.charCodeAt(i)
+  }
+  const diff = sigBytes.reduce((acc, byte, i) => acc | (byte ^ expectedBytes[i]), 0)
+  return diff === 0
+}
+
+export { BOT_MESSAGES } from './bot-messages'
+export { LISTING_EXTRACTION_PROMPT } from './llm-prompts'
+export {
+  downloadMetaMedia,
+  sendWhatsAppMessage,
+  sendConfirmationButton,
+  extractMessage,
+} from './whatsapp'
+export {
+  transcribeDarija,
+  extractListingFromText,
+  flagForAdminReview,
+} from './ai'

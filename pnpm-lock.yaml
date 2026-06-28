@@ -128,7 +128,15 @@ importers:
 
   packages/ui: {}
 
-  packages/utils: {}
+  packages/utils:
+    dependencies:
+      '@filahi/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: ^20.19.43
+        version: 20.19.43
 
 packages:
 
