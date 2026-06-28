@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: '/admin/ledger', label: 'Comptabilité' },
   { href: '/admin/whatsapp', label: 'WhatsApp' },
   { href: '/admin/payouts', label: 'Paiements D17' },
+  { href: '/admin/zones', label: 'Zones de livraison' },
 ]
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
