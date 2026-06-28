@@ -58,7 +58,7 @@
 - [x] Buyer auth (Supabase email/phone login)
 - [x] Order creation (inventory reserved on order)
 - [x] Order confirmation page
-- [ ] Recurring order setup (weekly subscription)
+- [x] Recurring order setup (weekly subscription)
 - [x] French + Arabic language toggle
 - [x] Mobile responsive (PWA installable)
 
@@ -94,13 +94,13 @@
 
 - [x] Admin login (role-protected middleware)
 - [x] KPI overview: daily orders, active trips, revenue, open disputes
-- [ ] Live trip map (all active drivers, Maplibre GL) — needs Maplibre installed
+- [x] Live trip map (all active drivers, Maplibre GL) — needs Maplibre installed
 - [x] Farmer management (profiles, listings, WA message log)
 - [x] Driver management (profiles, trust tier, document verification)
 - [x] Inventory management (approve, expire, edit)
 - [x] Disputes queue (GPS loss alerts, OTP failures)
 - [x] Ledger view (who is owed what, manual disbursement log)
-- [ ] Manual WhatsApp send to any farmer/driver
+- [x] Manual WhatsApp send to any farmer/driver
 
 **Definition of Done:** You can fully operate the business from the admin panel alone.
 

@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { AdminTripsClient } from './client'
 
 export default async function AdminTripsPage() {
   const supabase = await createServerSupabaseClient()
@@ -9,9 +10,22 @@ export default async function AdminTripsPage() {
     .order('created_at', { ascending: false })
     .limit(50)
 
+  const activeDrivers = (trips || [])
+    .filter((t) => t.last_known_lat && t.last_known_lng && ['accepted', 'in_transit', 'arrived_hub'].includes(t.status))
+    .map((t) => ({
+      id: t.id,
+      lat: t.last_known_lat!,
+      lng: t.last_known_lng!,
+      label: `${t.origin_location_name} - ${t.status}`,
+    }))
+
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">Trajets</h1>
+
+      <div className="mb-6">
+        <AdminTripsClient drivers={activeDrivers} trips={trips || []} />
+      </div>
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
         <table className="w-full text-left text-sm">
