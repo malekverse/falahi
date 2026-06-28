@@ -19,43 +19,53 @@ export default async function AdminTripsPage() {
       label: `${t.origin_location_name} - ${t.status}`,
     }))
 
+  function statusBadge(status: string) {
+    const green = ['delivered', 'settled']
+    const yellow = ['pending', 'accepted']
+    const red = ['disputed']
+    if (green.includes(status)) return 'badge-green'
+    if (yellow.includes(status)) return 'badge-gold'
+    if (red.includes(status)) return 'badge-red'
+    return 'badge-gray'
+  }
+
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Trajets</h1>
+      <h1 className="section-title mb-6">Trajets</h1>
 
       <div className="mb-6">
         <AdminTripsClient drivers={activeDrivers} trips={trips || []} />
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white" role="region" aria-label="Tableau des trajets">
+      <div className="card overflow-hidden" role="region" aria-label="Tableau des trajets">
         <table className="w-full text-left text-sm" role="table" aria-label="Liste des trajets en cours">
-          <thead className="border-b border-gray-200 bg-gray-50">
+          <thead className="border-b border-cream-200 bg-cream-50">
             <tr>
-              <th className="px-4 py-3 font-medium" scope="col">ID</th>
-              <th className="px-4 py-3 font-medium" scope="col">Origine</th>
-              <th className="px-4 py-3 font-medium" scope="col">Statut</th>
-              <th className="px-4 py-3 font-medium" scope="col">Chauffeur</th>
-              <th className="px-4 py-3 font-medium" scope="col">Position</th>
-              <th className="px-4 py-3 font-medium" scope="col">Créé le</th>
+              <th className="px-4 py-3 font-display text-xs font-semibold uppercase tracking-wider text-ink-500" scope="col">ID</th>
+              <th className="px-4 py-3 font-display text-xs font-semibold uppercase tracking-wider text-ink-500" scope="col">Origine</th>
+              <th className="px-4 py-3 font-display text-xs font-semibold uppercase tracking-wider text-ink-500" scope="col">Statut</th>
+              <th className="px-4 py-3 font-display text-xs font-semibold uppercase tracking-wider text-ink-500" scope="col">Chauffeur</th>
+              <th className="px-4 py-3 font-display text-xs font-semibold uppercase tracking-wider text-ink-500" scope="col">Position</th>
+              <th className="px-4 py-3 font-display text-xs font-semibold uppercase tracking-wider text-ink-500" scope="col">Créé le</th>
             </tr>
           </thead>
           <tbody>
             {(trips || []).map((trip) => (
-              <tr key={trip.id} className="border-b border-gray-100 hover:bg-gray-50" aria-label={`Trajet ${trip.id.slice(0, 8)}, ${trip.origin_location_name}, ${trip.status}`}>
-                <td className="px-4 py-3 font-mono text-xs">{trip.id.slice(0, 8)}</td>
-                <td className="px-4 py-3">{trip.origin_location_name}</td>
+              <tr key={trip.id} className="border-b border-cream-100 transition-colors hover:bg-cream-50" aria-label={`Trajet ${trip.id.slice(0, 8)}, ${trip.origin_location_name}, ${trip.status}`}>
+                <td className="px-4 py-3 font-mono text-xs text-ink-500">{trip.id.slice(0, 8)}</td>
+                <td className="px-4 py-3 text-ink-700">{trip.origin_location_name}</td>
                 <td className="px-4 py-3">
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium capitalize">
+                  <span className={statusBadge(trip.status)}>
                     {trip.status}
                   </span>
                 </td>
-                <td className="px-4 py-3">{trip.driver_id?.slice(0, 8) || '-'}</td>
-                <td className="px-4 py-3 font-mono text-xs text-gray-500">
+                <td className="px-4 py-3 text-ink-600">{trip.driver_id?.slice(0, 8) || '-'}</td>
+                <td className="px-4 py-3 font-mono text-xs text-ink-500">
                   {trip.last_known_lat && trip.last_known_lng
                     ? `${trip.last_known_lat.toFixed(4)}, ${trip.last_known_lng.toFixed(4)}`
                     : '-'}
                 </td>
-                <td className="px-4 py-3 text-gray-500">
+                <td className="px-4 py-3 text-ink-500">
                   {new Date(trip.created_at).toLocaleDateString('fr-TN')}
                 </td>
               </tr>
@@ -65,7 +75,7 @@ export default async function AdminTripsPage() {
       </div>
 
       {(!trips || trips.length === 0) && (
-        <p className="py-8 text-center text-gray-500">Aucun trajet</p>
+        <p className="py-8 text-center text-ink-500">Aucun trajet</p>
       )}
     </div>
   )

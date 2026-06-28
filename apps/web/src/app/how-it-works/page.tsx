@@ -46,35 +46,41 @@ export default function HowItWorksPage() {
   ]
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="mb-4 text-center text-3xl font-bold">Comment ça marche</h1>
-      <p className="mb-12 text-center text-lg text-gray-600">
-        De la ferme à votre table, en toute transparence.
-      </p>
+    <div className="mx-auto max-w-3xl">
+      <div className="mb-12 text-center">
+        <p className="font-display text-xs font-medium uppercase tracking-[0.15em] text-gold-500">
+          فلاحي — Guide
+        </p>
+        <h1 className="section-title mt-2 text-3xl sm:text-4xl">Comment ça marche</h1>
+        <p className="mt-2 text-ink-600">
+          De la ferme à votre table, en toute transparence.
+        </p>
+      </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         {steps.map((step) => (
-          <div key={step.number} className="flex gap-6 rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-2xl">
+          <div key={step.number} className="card flex gap-6 p-6">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-olive-100 text-2xl">
               {step.icon}
             </div>
             <div>
-              <span className="text-xs font-bold tracking-widest text-green-600">{step.number}</span>
-              <h2 className="mb-1 text-xl font-semibold">{step.title}</h2>
-              <p className="text-gray-600">{step.description}</p>
+              <span className="font-display text-xs font-bold tracking-widest text-gold-500">{step.number}</span>
+              <h2 className="mt-1 font-display text-lg font-semibold text-ink-900">{step.title}</h2>
+              <p className="mt-1 text-sm leading-relaxed text-ink-600">{step.description}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-12 text-center">
-        <Link
-          href="/marketplace"
-          className="inline-block rounded-lg bg-green-600 px-8 py-3 text-white hover:bg-green-700"
-        >
+      <div className="olive-branch-divider">
+        <span>🌿</span>
+      </div>
+
+      <div className="text-center">
+        <Link href="/marketplace" className="btn-primary text-base">
           Voir le marché
         </Link>
       </div>
-    </main>
+    </div>
   )
 }
