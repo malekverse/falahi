@@ -7,6 +7,9 @@ const INITIAL_LIMIT = 12
 
 interface SearchParams {
   category?: string
+  region?: string
+  minPrice?: string
+  maxPrice?: string
 }
 
 export default async function MarketplacePage({
@@ -17,6 +20,15 @@ export default async function MarketplacePage({
   const params = await searchParams
   const supabase = await createServerSupabaseClient()
 
+  const { data: regions } = await supabase
+    .from('inventory_items')
+    .select('location_name')
+    .eq('status', 'available')
+    .not('location_name', 'is', null)
+    .order('location_name')
+
+  const uniqueRegions = [...new Set<string>((regions ?? []).map((r) => r.location_name).filter(Boolean))]
+
   let query = supabase
     .from('inventory_items')
     .select('*')
@@ -26,6 +38,24 @@ export default async function MarketplacePage({
 
   if (params.category) {
     query = query.eq('product_category', params.category)
+  }
+
+  if (params.region) {
+    query = query.eq('location_name', params.region)
+  }
+
+  if (params.minPrice) {
+    const minMillimes = parseInt(params.minPrice) * 1000
+    if (!isNaN(minMillimes)) {
+      query = query.gte('platform_price_millimes', minMillimes)
+    }
+  }
+
+  if (params.maxPrice) {
+    const maxMillimes = parseInt(params.maxPrice) * 1000
+    if (!isNaN(maxMillimes)) {
+      query = query.lte('platform_price_millimes', maxMillimes)
+    }
   }
 
   const { data: initialListings } = await query
@@ -39,11 +69,14 @@ export default async function MarketplacePage({
         <h1 className="section-title mt-1">Produits disponibles</h1>
       </div>
 
-      <Filters />
+      <Filters regions={uniqueRegions} />
 
       <LoadMore
         initialItems={(initialListings || []) as ListingCardItem[]}
         category={params.category}
+        region={params.region}
+        minPrice={params.minPrice}
+        maxPrice={params.maxPrice}
       />
     </div>
   )
