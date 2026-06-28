@@ -136,3 +136,32 @@ export interface OrderItem {
   quantity: number
   unit_price_millimes: Millimes
 }
+
+export type SubTripStatus = 'pending' | 'accepted' | 'in_transit' | 'delivered' | 'settled' | 'disputed'
+
+export interface SubTrip {
+  id: string
+  parent_trip_id: string
+  courier_id: string | null
+  delivery_zone_id: string | null
+  status: SubTripStatus
+  otp_delivery: string | null
+  cargo_value_millimes: Millimes
+  driver_fee_millimes: Millimes
+  pickup_location_name: string
+  delivery_location_name: string
+  delivery_address: string | null
+  order_ids: string[]
+  created_at: string
+  accepted_at: string | null
+  delivered_at: string | null
+  settled_at: string | null
+}
+
+export interface DeliveryZone {
+  id: string
+  hub_id: string
+  name: string
+  boundary: Record<string, unknown>
+  is_active: boolean
+}

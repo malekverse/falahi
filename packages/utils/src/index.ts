@@ -101,3 +101,16 @@ export {
   sanitizePhone,
   sanitizePlate,
 } from './sanitize'
+export {
+  haversineDistance,
+  isWithinGeofence,
+  validateTripRouting,
+  groupOrdersByZone,
+} from './routing'
+export type {
+  DriverRole,
+  DestinationType,
+  RoutingValidationResult,
+  OrderWithLocation,
+  ZoneGroup,
+} from './routing'

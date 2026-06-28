@@ -110,13 +110,13 @@
 
 **Goal:** Long-haul trucks deliver to hub; last-mile couriers handle city delivery.
 
-- [ ] Hub registered in DB (Bir El Kassaa)
-- [ ] Routing validation: reject direct-to-buyer long-haul trips
-- [ ] Hub arrival geo-fence (500m radius check)
-- [ ] Order grouping by delivery zone (PostGIS)
-- [ ] Last-mile sub-trip creation
+- [x] Hub registered in DB (Bir El Kassaa)
+- [x] Routing validation: reject direct-to-buyer long-haul trips
+- [x] Hub arrival geo-fence (500m radius check)
+- [x] Order grouping by delivery zone (PostGIS)
+- [x] Last-mile sub-trip creation
 - [x] Courier app/interface (can be same driver app with `role = courier`)
-- [ ] Delivery zone boundaries drawn and stored as GeoJSON
+- [x] Delivery zone boundaries drawn and stored as GeoJSON
 
 **Definition of Done:** A batch of orders from multiple buyers in La Marsa is grouped into one last-mile courier run.
 
