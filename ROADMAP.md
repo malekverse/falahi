@@ -29,17 +29,17 @@
 
 **Goal:** A farmer in Béja can list produce by sending a voice note. You verify it works by doing it yourself.
 
-- [ ] Webhook POST handler with signature verification
-- [ ] Meta media download (audio file from message)
-- [ ] Groq Whisper integration (Darija transcription)
-- [ ] LLM extraction prompt (Claude/GPT-4o-mini → JSON)
-- [ ] Confidence threshold check (< 0.75 → human review)
-- [ ] Idempotency check (wa_message_id dedup)
-- [ ] Auto-farmer profile creation (first message)
-- [ ] WhatsApp confirmation button sent to farmer
-- [ ] Farmer button press → listing goes live
-- [ ] Farmer payment query ("flousi") → bot replies with status
-- [ ] Admin flagging for low-confidence transcriptions
+- [x] Webhook POST handler with signature verification
+- [x] Meta media download (audio file from message)
+- [x] Groq Whisper integration (Darija transcription)
+- [x] LLM extraction prompt (Claude/GPT-4o-mini → JSON)
+- [x] Confidence threshold check (< 0.75 → human review)
+- [x] Idempotency check (wa_message_id dedup)
+- [x] Auto-farmer profile creation (first message)
+- [x] WhatsApp confirmation button sent to farmer
+- [x] Farmer button press → listing goes live
+- [x] Farmer payment query ("flousi") → bot replies with status
+- [x] Admin flagging for low-confidence transcriptions
 
 **Manual test:** Record a voice note in Darija, send to your bot WhatsApp number, confirm the listing appears in your Supabase table with correct data.
 
