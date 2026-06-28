@@ -14,6 +14,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home')
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null)
   const [isRegistered, setIsRegistered] = useState<boolean | null>(null)
+  const [driverRole, setDriverRole] = useState<'long_haul' | 'courier'>('long_haul')
 
   useEffect(() => {
     checkRegistration()
@@ -28,11 +29,12 @@ export default function App() {
 
     const { data } = await supabase
       .from('driver_profiles')
-      .select('id')
+      .select('id, role')
       .eq('id', user.id)
       .single()
 
     setIsRegistered(!!data)
+    if (data?.role) setDriverRole(data.role as 'long_haul' | 'courier')
   }
 
   function handleTripPress(tripId: string) {
@@ -64,6 +66,7 @@ export default function App() {
         return selectedTripId ? (
           <TripDetailScreen
             tripId={selectedTripId}
+            role={driverRole}
             onBack={() => setCurrentScreen('home')}
           />
         ) : (

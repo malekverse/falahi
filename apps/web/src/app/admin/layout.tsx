@@ -9,6 +9,8 @@ const NAV_ITEMS = [
   { href: '/admin/inventory', label: 'Inventaire' },
   { href: '/admin/disputes', label: 'Litiges' },
   { href: '/admin/ledger', label: 'Comptabilité' },
+  { href: '/admin/whatsapp', label: 'WhatsApp' },
+  { href: '/admin/payouts', label: 'Paiements D17' },
 ]
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

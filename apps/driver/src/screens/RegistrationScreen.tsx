@@ -3,12 +3,17 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 
 import { supabase } from '../services/supabase'
 
 const VEHICLE_TYPES = ['isuzu', 'dmax', 'scooter', 'berlingo', 'fiorino', 'other']
+const DRIVER_ROLES = [
+  { key: 'long_haul', label: 'Longue distance' },
+  { key: 'courier', label: 'Coursier (dernier km)' },
+]
 
 export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
   const [fullName, setFullName] = useState('')
   const [cinNumber, setCinNumber] = useState('')
   const [vehiclePlate, setVehiclePlate] = useState('')
   const [vehicleType, setVehicleType] = useState('')
+  const [driverRole, setDriverRole] = useState<'long_haul' | 'courier'>('long_haul')
   const [loading, setLoading] = useState(false)
 
   async function handleRegister() {
@@ -29,6 +34,7 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
       carte_grise_url: '',
       vehicle_type: vehicleType,
       vehicle_plate: vehiclePlate,
+      role: driverRole,
     })
 
     setLoading(false)
@@ -45,7 +51,7 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Inscription chauffeur</Text>
+      <Text style={styles.title}>Inscription</Text>
 
       <Text style={styles.label}>Nom complet</Text>
       <TextInput
@@ -71,6 +77,21 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
         onChangeText={setVehiclePlate}
         placeholder="123 TN 10"
       />
+
+      <Text style={styles.label}>Type de chauffeur</Text>
+      <View style={styles.vehicleRow}>
+        {DRIVER_ROLES.map((r) => (
+          <TouchableOpacity
+            key={r.key}
+            style={[styles.vehicleBtn, driverRole === r.key && styles.vehicleBtnActive]}
+            onPress={() => setDriverRole(r.key as 'long_haul' | 'courier')}
+          >
+            <Text style={[styles.vehicleBtnText, driverRole === r.key && styles.vehicleBtnTextActive]}>
+              {r.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       <Text style={styles.label}>Type de véhicule</Text>
       <View style={styles.vehicleRow}>

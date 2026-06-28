@@ -6,6 +6,7 @@ import { startBackgroundTracking, stopBackgroundTracking } from '../services/loc
 interface Trip {
   id: string
   origin_location_name: string
+  destination_location_name: string | null
   status: string
   otp_pickup: string
   otp_delivery: string
@@ -15,7 +16,7 @@ interface Trip {
   last_known_lng: number | null
 }
 
-export function TripDetailScreen({ tripId, onBack }: { tripId: string; onBack: () => void }) {
+export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; role: 'long_haul' | 'courier'; onBack: () => void }) {
   const [trip, setTrip] = useState<Trip | null>(null)
   const [otpInput, setOtpInput] = useState('')
   const [loading, setLoading] = useState(true)
@@ -150,6 +151,9 @@ export function TripDetailScreen({ tripId, onBack }: { tripId: string; onBack: (
       </TouchableOpacity>
 
       <Text style={styles.title}>{trip.origin_location_name}</Text>
+      {trip.destination_location_name && role === 'courier' && (
+        <Text style={styles.destination}>→ {trip.destination_location_name}</Text>
+      )}
       <Text style={styles.status}>Statut: {trip.status}</Text>
 
       <View style={styles.detailRow}>
@@ -205,8 +209,8 @@ export function TripDetailScreen({ tripId, onBack }: { tripId: string; onBack: (
         </View>
       )}
 
-      {/* Arrive at hub */}
-      {trip.status === 'in_transit' && (
+      {/* Arrive at hub — long-haul only */}
+      {role === 'long_haul' && trip.status === 'in_transit' && (
         <TouchableOpacity
           style={styles.actionBtn}
           onPress={handleArriveHub}
@@ -218,8 +222,32 @@ export function TripDetailScreen({ tripId, onBack }: { tripId: string; onBack: (
         </TouchableOpacity>
       )}
 
-      {/* OTP Input for delivery */}
-      {trip.status === 'arrived_hub' && (
+      {/* Courier: skip hub, go direct from in_transit to delivery OTP */}
+      {role === 'courier' && trip.status === 'in_transit' && (
+        <View style={styles.otpSection}>
+          <Text style={styles.otpLabel}>Code de livraison (chez l'acheteur)</Text>
+          <TextInput
+            style={styles.otpInput}
+            value={otpInput}
+            onChangeText={setOtpInput}
+            placeholder="0000"
+            keyboardType="numeric"
+            maxLength={4}
+          />
+          <TouchableOpacity
+            style={styles.actionBtn}
+            onPress={handleDeliveryOTP}
+            disabled={actionLoading || otpInput.length !== 4}
+          >
+            <Text style={styles.actionBtnText}>
+              {actionLoading ? '...' : 'Confirmer la livraison'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* OTP Input for delivery — long-haul */}
+      {role === 'long_haul' && trip.status === 'arrived_hub' && (
         <View style={styles.otpSection}>
           <Text style={styles.otpLabel}>Code de livraison</Text>
           <TextInput
@@ -250,6 +278,7 @@ const styles = StyleSheet.create({
   backBtn: { marginBottom: 12 },
   backBtnText: { color: '#16a34a', fontSize: 16 },
   loadingText: { textAlign: 'center', color: '#9ca3af', marginTop: 40 },
+  destination: { fontSize: 16, color: '#374151', marginBottom: 4 },
   title: { fontSize: 24, fontWeight: '700', marginBottom: 4 },
   status: { fontSize: 14, color: '#6b7280', marginBottom: 20 },
   detailRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },

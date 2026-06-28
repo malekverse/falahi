@@ -115,7 +115,7 @@
 - [ ] Hub arrival geo-fence (500m radius check)
 - [ ] Order grouping by delivery zone (PostGIS)
 - [ ] Last-mile sub-trip creation
-- [ ] Courier app/interface (can be same driver app with `role = courier`)
+- [x] Courier app/interface (can be same driver app with `role = courier`)
 - [ ] Delivery zone boundaries drawn and stored as GeoJSON
 
 **Definition of Done:** A batch of orders from multiple buyers in La Marsa is grouped into one last-mile courier run.
@@ -127,13 +127,13 @@
 **Goal:** Real money flowing. 5 farmers, 3 buyers, 2 drivers.
 
 **Pre-launch checklist:**
-- [ ] Privacy policy published (INDP compliance)
-- [ ] Terms of service published
+- [x] Privacy policy published (INDP compliance)
+- [x] Terms of service published
 - [ ] WA message templates approved by Meta
-- [ ] Admin can process manual D17 payouts
+- [x] Admin can process manual D17 payouts
 - [ ] Error monitoring configured (Sentry free tier)
 - [ ] Weekly automated DB backup confirmed
-- [ ] Dispute resolution process documented
+- [x] Dispute resolution process documented
 
 **Target metrics:**
 - 5+ farmers with at least 1 listing each

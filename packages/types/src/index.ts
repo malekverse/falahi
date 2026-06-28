@@ -1,4 +1,5 @@
 export type UserRole = 'farmer' | 'driver' | 'courier' | 'buyer' | 'admin'
+export type DriverRole = 'long_haul' | 'courier'
 export type TripStatus = 'pending' | 'accepted' | 'in_transit' | 'arrived_hub' | 'delivered' | 'settled' | 'disputed'
 export type InventoryStatus = 'pending_confirmation' | 'available' | 'reserved' | 'sold' | 'expired' | 'disputed'
 export type PaymentStatus = 'pending' | 'held' | 'released' | 'disbursed' | 'disputed'
@@ -49,6 +50,7 @@ export interface DriverProfile {
   vehicle_plate: string
   carte_grise_url: string | null
   vehicle_type: string
+  role: DriverRole
   trust_tier: 1 | 2 | 3
   trust_score: number
   total_trips: number
@@ -80,6 +82,8 @@ export interface Trip {
   driver_id: string | null
   buyer_id: string | null
   status: TripStatus
+  origin_location_name: string
+  destination_location_name: string | null
   pickup_otp_hash: string | null
   delivery_otp_hash: string | null
   pickup_otp_attempts: number

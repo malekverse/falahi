@@ -41,6 +41,7 @@ CREATE TABLE driver_profiles (
   carte_grise_url       TEXT NOT NULL,
   vehicle_type          TEXT NOT NULL CHECK (vehicle_type IN ('isuzu', 'dmax', 'scooter', 'berlingo', 'fiorino', 'other')),
   vehicle_plate         TEXT UNIQUE NOT NULL,
+  role                  TEXT NOT NULL DEFAULT 'long_haul' CHECK (role IN ('long_haul', 'courier')),
   trust_tier            INT DEFAULT 1 CHECK (trust_tier BETWEEN 1 AND 3),
   trust_score           NUMERIC(4,2) DEFAULT 0,
   total_trips           INT DEFAULT 0,
@@ -191,6 +192,7 @@ CREATE TABLE trips (
   driver_id               UUID REFERENCES driver_profiles(id),
   order_ids               UUID[],
   origin_location_name    TEXT NOT NULL,
+  destination_location_name TEXT,
   origin_coordinates      GEOMETRY(Point, 4326),
   hub_id                  UUID REFERENCES hubs(id),
   status                  TEXT NOT NULL DEFAULT 'pending'
@@ -255,7 +257,7 @@ BEGIN
     RETURN jsonb_build_object('success', false, 'error', 'trip_not_found');
   END IF;
 
-  IF v_trip.status != 'in_transit' THEN
+  IF v_trip.status NOT IN ('in_transit', 'arrived_hub') THEN
     RETURN jsonb_build_object('success', false, 'error', 'invalid_status');
   END IF;
 

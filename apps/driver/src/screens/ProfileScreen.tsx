@@ -7,6 +7,7 @@ export function ProfileScreen() {
     full_name: string
     vehicle_type: string
     vehicle_plate: string
+    role: string
     trust_tier: number
     trust_score: number
     total_trips: number
@@ -28,7 +29,7 @@ export function ProfileScreen() {
 
     const { data: driverData } = await supabase
       .from('driver_profiles')
-      .select('vehicle_type, vehicle_plate, trust_tier, trust_score, total_trips')
+      .select('vehicle_type, vehicle_plate, role, trust_tier, trust_score, total_trips')
       .eq('id', user.id)
       .single()
 
@@ -46,6 +47,10 @@ export function ProfileScreen() {
           <View style={styles.row}>
             <Text style={styles.label}>Nom</Text>
             <Text style={styles.value}>{driver.full_name}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Rôle</Text>
+            <Text style={styles.value}>{driver.role === 'courier' ? 'Coursier' : 'Longue distance'}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Véhicule</Text>
