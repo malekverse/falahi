@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, useColorScheme } from 'react-native'
 import { supabase } from '../services/supabase'
+import { lightTheme, darkTheme } from '../services/theme'
 
 interface DriverData {
   full_name: string
@@ -18,8 +19,15 @@ const TIER_REQUIREMENTS = [
   { tier: 3, minScore: 4.0, minTrips: 30, label: 'Score ≥ 4.0 et 30 trajets' },
 ]
 
+const TIER_PERKS: Record<number, string> = {
+  2: 'cargaison max 350 TND, priorité sur les trajets',
+  3: 'cargaison max 500 TND, commission réduite',
+}
+
 export function ProfileScreen() {
   const [driver, setDriver] = useState<DriverData | null>(null)
+  const isDark = useColorScheme() === 'dark'
+  const t = isDark ? darkTheme : lightTheme
 
   useEffect(() => {
     loadProfile()
@@ -48,7 +56,7 @@ export function ProfileScreen() {
       .in('status', ['delivered', 'settled'])
 
     const totalEarnings = (earningsData || []).reduce(
-      (sum, t) => sum + (t.driver_fee_millimes || 0), 0
+      (sum, n) => sum + (n.driver_fee_millimes || 0), 0
     )
 
     if (profile && driverData) {
@@ -61,6 +69,8 @@ export function ProfileScreen() {
     if (driver.trust_tier >= 3) return null
     return TIER_REQUIREMENTS.find((r) => r.tier > driver.trust_tier) || null
   }
+
+  const styles = createStyles(t)
 
   return (
     <View style={styles.container}>
@@ -95,7 +105,7 @@ export function ProfileScreen() {
             </View>
             <View style={[styles.row, { borderBottomWidth: 0 }]}>
               <Text style={styles.label}>Gains totaux</Text>
-              <Text style={[styles.value, { color: '#16a34a' }]}>
+              <Text style={styles.earnings}>
                 {(driver.total_earnings / 1000).toFixed(3)} TND
               </Text>
             </View>
@@ -105,27 +115,29 @@ export function ProfileScreen() {
             const next = getNextTier()
             if (!next) {
               return (
-                <View style={[styles.card, { marginTop: 16, backgroundColor: '#f0fdf4' }]}>
-                  <Text style={styles.nextTierTitle}>Niveau maximum atteint</Text>
-                  <Text style={styles.nextTierText}>Tier 3 — tous les avantages débloqués</Text>
+                <View style={[styles.tierCard, { backgroundColor: isDark ? '#064e3b' : '#f0fdf4' }]}>
+                  <Text style={[styles.nextTierTitle, { color: isDark ? '#6ee7b7' : undefined }]}>
+                    Niveau maximum atteint
+                  </Text>
+                  <Text style={[styles.nextTierText, { color: isDark ? '#a7f3d0' : undefined }]}>
+                    Tier 3 — tous les avantages débloqués
+                  </Text>
                 </View>
               )
             }
             return (
-              <View style={[styles.card, { marginTop: 16, backgroundColor: '#fffbeb' }]}>
-                <Text style={styles.nextTierTitle}>
+              <View style={[styles.tierCard, { backgroundColor: isDark ? '#451a03' : '#fffbeb' }]}>
+                <Text style={[styles.nextTierTitle, { color: isDark ? '#fcd34d' : undefined }]}>
                   Prochain palier : Tier {next.tier}
                 </Text>
-                <Text style={styles.nextTierText}>
-                  {next.tier === 2
-                    ? 'Avantages: cargaison max 350 TND, priorité sur les trajets'
-                    : 'Avantages: cargaison max 500 TND, commission réduite'}
+                <Text style={[styles.nextTierText, { color: isDark ? '#fde68a' : undefined }]}>
+                  Avantages: {TIER_PERKS[next.tier]}
                 </Text>
                 <View style={styles.progressRow}>
                   <View style={styles.progressLabel}>
                     <Text style={styles.progressText}>Score: {driver.trust_score.toFixed(1)}/{next.minScore}</Text>
                   </View>
-                  <View style={styles.progressBar}>
+                  <View style={[styles.progressBar, { backgroundColor: t.border }]}>
                     <View
                       style={[
                         styles.progressFill,
@@ -141,7 +153,7 @@ export function ProfileScreen() {
                   <View style={styles.progressLabel}>
                     <Text style={styles.progressText}>Trajets: {driver.total_trips}/{next.minTrips}</Text>
                   </View>
-                  <View style={styles.progressBar}>
+                  <View style={[styles.progressBar, { backgroundColor: t.border }]}>
                     <View
                       style={[
                         styles.progressFill,
@@ -164,40 +176,46 @@ export function ProfileScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb', padding: 16 },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: 20 },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
-  },
-  label: { fontSize: 15, color: '#6b7280' },
-  value: { fontSize: 15, fontWeight: '600', color: '#111827' },
-  loading: { textAlign: 'center', color: '#9ca3af', marginTop: 40 },
-  nextTierTitle: { fontSize: 16, fontWeight: '700', marginBottom: 4 },
-  nextTierText: { fontSize: 13, color: '#6b7280', marginBottom: 12 },
-  progressRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  progressLabel: { width: 100 },
-  progressText: { fontSize: 12, color: '#6b7280' },
-  progressBar: {
-    flex: 1,
-    height: 8,
-    backgroundColor: '#e5e7eb',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 4,
-  },
-})
+const createStyles = (t: typeof lightTheme) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: t.background, padding: 16 },
+    title: { fontSize: 22, fontWeight: '700', marginBottom: 20, color: t.text },
+    card: {
+      backgroundColor: t.card,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: t.border,
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: t.border,
+    },
+    label: { fontSize: 15, color: t.textSecondary },
+    value: { fontSize: 15, fontWeight: '600', color: t.text },
+    earnings: { fontSize: 15, fontWeight: '600', color: '#16a34a' },
+    loading: { textAlign: 'center', color: t.textSecondary, marginTop: 40 },
+    tierCard: {
+      borderRadius: 12,
+      padding: 16,
+      marginTop: 16,
+    },
+    nextTierTitle: { fontSize: 16, fontWeight: '700', marginBottom: 4, color: t.text },
+    nextTierText: { fontSize: 13, color: t.textSecondary, marginBottom: 12 },
+    progressRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+    progressLabel: { width: 100 },
+    progressText: { fontSize: 12, color: t.textSecondary },
+    progressBar: {
+      flex: 1,
+      height: 8,
+      borderRadius: 4,
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: '100%',
+      borderRadius: 4,
+    },
+  })

@@ -31,11 +31,16 @@ export default async function AdminDashboardPage() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">Tableau de bord</h1>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Indicateurs clés">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-            <div className={`mb-2 h-2 w-12 rounded ${card.color}`} />
-            <p className="text-2xl font-bold">{card.value}</p>
+          <div
+            key={card.label}
+            className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+            role="listitem"
+            aria-label={`${card.label}: ${card.value}`}
+          >
+            <div className={`mb-2 h-2 w-12 rounded ${card.color}`} aria-hidden="true" />
+            <p className="text-2xl font-bold" aria-label={`${card.value} ${card.label}`}>{card.value}</p>
             <p className="text-sm text-gray-500">{card.label}</p>
           </div>
         ))}

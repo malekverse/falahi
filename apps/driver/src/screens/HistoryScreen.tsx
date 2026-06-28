@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native'
+import { View, Text, FlatList, StyleSheet, RefreshControl, useColorScheme } from 'react-native'
 import { supabase } from '../services/supabase'
 import { TripCard } from '../components/TripCard'
+import { lightTheme, darkTheme } from '../services/theme'
 
 interface Trip {
   id: string
@@ -15,6 +16,8 @@ export function HistoryScreen() {
   const [trips, setTrips] = useState<Trip[]>([])
   const [refreshing, setRefreshing] = useState(false)
   const [loading, setLoading] = useState(true)
+  const isDark = useColorScheme() === 'dark'
+  const t = isDark ? darkTheme : lightTheme
 
   const fetchHistory = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -38,6 +41,8 @@ export function HistoryScreen() {
     fetchHistory()
   }, [fetchHistory])
 
+  const styles = createStyles(t)
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Historique</Text>
@@ -58,6 +63,7 @@ export function HistoryScreen() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
+            tintColor={t.textSecondary}
             onRefresh={async () => {
               setRefreshing(true)
               await fetchHistory()
@@ -74,10 +80,11 @@ export function HistoryScreen() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  title: { fontSize: 22, fontWeight: '700', padding: 16, paddingBottom: 8 },
-  list: { padding: 16 },
-  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  emptyText: { color: '#9ca3af', fontSize: 16 },
-})
+const createStyles = (t: typeof lightTheme) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: t.background },
+    title: { fontSize: 22, fontWeight: '700', padding: 16, paddingBottom: 8, color: t.text },
+    list: { padding: 16 },
+    emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    emptyText: { color: t.textSecondary, fontSize: 16 },
+  })

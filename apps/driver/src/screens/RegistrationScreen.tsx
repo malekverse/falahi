@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, useColorScheme } from 'react-native'
 import { supabase } from '../services/supabase'
+import { lightTheme, darkTheme } from '../services/theme'
 
 const VEHICLE_TYPES = ['isuzu', 'dmax', 'scooter', 'berlingo', 'fiorino', 'other']
 const DRIVER_ROLES = [
@@ -15,6 +16,8 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
   const [vehicleType, setVehicleType] = useState('')
   const [driverRole, setDriverRole] = useState<'long_haul' | 'courier'>('long_haul')
   const [loading, setLoading] = useState(false)
+  const isDark = useColorScheme() === 'dark'
+  const t = isDark ? darkTheme : lightTheme
 
   async function handleRegister() {
     if (!fullName || !cinNumber || !vehiclePlate || !vehicleType) return
@@ -49,6 +52,8 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
     onComplete()
   }
 
+  const styles = createStyles(t)
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.title}>Inscription</Text>
@@ -59,6 +64,7 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
         value={fullName}
         onChangeText={setFullName}
         placeholder="Votre nom"
+        placeholderTextColor={t.textSecondary}
       />
 
       <Text style={styles.label}>N° CIN</Text>
@@ -67,6 +73,7 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
         value={cinNumber}
         onChangeText={setCinNumber}
         placeholder="00000000"
+        placeholderTextColor={t.textSecondary}
         keyboardType="numeric"
       />
 
@@ -76,6 +83,7 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
         value={vehiclePlate}
         onChangeText={setVehiclePlate}
         placeholder="123 TN 10"
+        placeholderTextColor={t.textSecondary}
       />
 
       <Text style={styles.label}>Type de chauffeur</Text>
@@ -121,38 +129,40 @@ export function RegistrationScreen({ onComplete }: { onComplete: () => void }) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  content: { padding: 24 },
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 24, textAlign: 'center' },
-  label: { fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 6, marginTop: 16 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
-  },
-  vehicleRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  vehicleBtn: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-  },
-  vehicleBtnActive: { borderColor: '#16a34a', backgroundColor: '#f0fdf4' },
-  vehicleBtnText: { fontSize: 14, color: '#374151' },
-  vehicleBtnTextActive: { color: '#16a34a', fontWeight: '600' },
-  submitBtn: {
-    backgroundColor: '#16a34a',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 32,
-  },
-  submitBtnDisabled: { opacity: 0.5 },
-  submitBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-})
+const createStyles = (t: typeof lightTheme) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: t.background },
+    content: { padding: 24 },
+    title: { fontSize: 24, fontWeight: '700', marginBottom: 24, textAlign: 'center', color: t.text },
+    label: { fontSize: 14, fontWeight: '500', color: t.textSecondary, marginBottom: 6, marginTop: 16 },
+    input: {
+      borderWidth: 1,
+      borderColor: t.border,
+      borderRadius: 8,
+      padding: 12,
+      fontSize: 16,
+      backgroundColor: t.card,
+      color: t.text,
+    },
+    vehicleRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    vehicleBtn: {
+      borderWidth: 1,
+      borderColor: t.border,
+      borderRadius: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      backgroundColor: t.card,
+    },
+    vehicleBtnActive: { borderColor: '#16a34a', backgroundColor: t.activeBg },
+    vehicleBtnText: { fontSize: 14, color: t.text },
+    vehicleBtnTextActive: { color: '#16a34a', fontWeight: '600' },
+    submitBtn: {
+      backgroundColor: '#16a34a',
+      borderRadius: 8,
+      padding: 16,
+      alignItems: 'center',
+      marginTop: 32,
+    },
+    submitBtnDisabled: { opacity: 0.5 },
+    submitBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  })

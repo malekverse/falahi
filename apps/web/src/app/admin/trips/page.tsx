@@ -27,21 +27,21 @@ export default async function AdminTripsPage() {
         <AdminTripsClient drivers={activeDrivers} trips={trips || []} />
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-        <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white" role="region" aria-label="Tableau des trajets">
+        <table className="w-full text-left text-sm" role="table" aria-label="Liste des trajets en cours">
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
-              <th className="px-4 py-3 font-medium">ID</th>
-              <th className="px-4 py-3 font-medium">Origine</th>
-              <th className="px-4 py-3 font-medium">Statut</th>
-              <th className="px-4 py-3 font-medium">Chauffeur</th>
-              <th className="px-4 py-3 font-medium">Position</th>
-              <th className="px-4 py-3 font-medium">Créé le</th>
+              <th className="px-4 py-3 font-medium" scope="col">ID</th>
+              <th className="px-4 py-3 font-medium" scope="col">Origine</th>
+              <th className="px-4 py-3 font-medium" scope="col">Statut</th>
+              <th className="px-4 py-3 font-medium" scope="col">Chauffeur</th>
+              <th className="px-4 py-3 font-medium" scope="col">Position</th>
+              <th className="px-4 py-3 font-medium" scope="col">Créé le</th>
             </tr>
           </thead>
           <tbody>
             {(trips || []).map((trip) => (
-              <tr key={trip.id} className="border-b border-gray-100 hover:bg-gray-50">
+              <tr key={trip.id} className="border-b border-gray-100 hover:bg-gray-50" aria-label={`Trajet ${trip.id.slice(0, 8)}, ${trip.origin_location_name}, ${trip.status}`}>
                 <td className="px-4 py-3 font-mono text-xs">{trip.id.slice(0, 8)}</td>
                 <td className="px-4 py-3">{trip.origin_location_name}</td>
                 <td className="px-4 py-3">

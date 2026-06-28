@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native'
+import { View, Text, FlatList, StyleSheet, RefreshControl, useColorScheme } from 'react-native'
 import { supabase } from '../services/supabase'
 import { TripCard } from '../components/TripCard'
+import { lightTheme, darkTheme } from '../services/theme'
 
 interface Trip {
   id: string
@@ -15,6 +16,9 @@ export function HomeScreen({ onTripPress }: { onTripPress: (tripId: string) => v
   const [trips, setTrips] = useState<Trip[]>([])
   const [refreshing, setRefreshing] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [driverRole, setDriverRole] = useState<string | null>(null)
+  const isDark = useColorScheme() === 'dark'
+  const t = isDark ? darkTheme : lightTheme
 
   const fetchTrips = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -23,13 +27,25 @@ export function HomeScreen({ onTripPress }: { onTripPress: (tripId: string) => v
       return
     }
 
-    const { data } = await supabase
+    const { data: profile } = await supabase
+      .from('driver_profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    setDriverRole(profile?.role ?? null)
+
+    let query = supabase
       .from('trips')
       .select('id, origin_location_name, status, cargo_value_millimes, driver_fee_millimes')
       .eq('driver_id', user.id)
       .in('status', ['pending', 'accepted', 'in_transit', 'arrived_hub'])
       .order('created_at', { ascending: false })
 
+    if (profile?.role === 'courier') {
+      query = query.eq('role', 'courier')
+    }
+
+    const { data } = await query
     setTrips(data || [])
     setLoading(false)
   }, [])
@@ -43,6 +59,8 @@ export function HomeScreen({ onTripPress }: { onTripPress: (tripId: string) => v
     await fetchTrips()
     setRefreshing(false)
   }
+
+  const styles = createStyles(t)
 
   return (
     <View style={styles.container}>
@@ -62,7 +80,7 @@ export function HomeScreen({ onTripPress }: { onTripPress: (tripId: string) => v
           />
         )}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={t.textSecondary} />
         }
         contentContainerStyle={trips.length === 0 ? styles.emptyContainer : styles.list}
         ListEmptyComponent={
@@ -73,10 +91,11 @@ export function HomeScreen({ onTripPress }: { onTripPress: (tripId: string) => v
   )
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  title: { fontSize: 22, fontWeight: '700', padding: 16, paddingBottom: 8 },
-  list: { padding: 16 },
-  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  emptyText: { color: '#9ca3af', fontSize: 16 },
-})
+const createStyles = (t: typeof lightTheme) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: t.background },
+    title: { fontSize: 22, fontWeight: '700', padding: 16, paddingBottom: 8, color: t.text },
+    list: { padding: 16 },
+    emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    emptyText: { color: t.textSecondary, fontSize: 16 },
+  })
