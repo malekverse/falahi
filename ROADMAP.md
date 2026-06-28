@@ -70,16 +70,16 @@
 
 **Goal:** A driver can accept a trip, drive, and complete delivery with GPS tracked the whole time.
 
-- [ ] Driver registration (CIN upload, plate, vehicle type)
-- [ ] Driver tier system (Tier 1 by default)
-- [ ] Trip offer list (nearby offers via PostGIS)
-- [ ] Trip acceptance
-- [ ] Background GPS (Foreground Service, screen locked)
-- [ ] Offline location caching (SecureStore queue)
-- [ ] OTP entry at pickup (validates via Supabase RPC)
-- [ ] OTP entry at delivery
-- [ ] Trip history screen
-- [ ] Foreground notification shown during active trip
+- [x] Driver registration (CIN upload, plate, vehicle type)
+- [x] Driver tier system (Tier 1 by default)
+- [x] Trip offer list (nearby offers via PostGIS)
+- [x] Trip acceptance
+- [x] Background GPS (Foreground Service, screen locked)
+- [x] Offline location caching (AsyncStorage queue)
+- [x] OTP entry at pickup (validates via Supabase RPC)
+- [x] OTP entry at delivery
+- [x] Trip history screen
+- [x] Foreground notification shown during active trip
 - [ ] Android APK buildable via EAS
 
 **Critical test:** Lock your Android phone, put it in your pocket, drive for 30 minutes. Verify continuous coordinate pings received in admin panel.
@@ -92,14 +92,14 @@
 
 **Goal:** You can monitor the whole system from one screen.
 
-- [ ] Admin login (role-protected middleware)
-- [ ] KPI overview: daily orders, active trips, revenue, open disputes
-- [ ] Live trip map (all active drivers, Maplibre GL)
-- [ ] Farmer management (profiles, listings, WA message log)
-- [ ] Driver management (profiles, trust tier, document verification)
-- [ ] Inventory management (approve, expire, edit)
-- [ ] Disputes queue (GPS loss alerts, OTP failures)
-- [ ] Ledger view (who is owed what, manual disbursement log)
+- [x] Admin login (role-protected middleware)
+- [x] KPI overview: daily orders, active trips, revenue, open disputes
+- [ ] Live trip map (all active drivers, Maplibre GL) — needs Maplibre installed
+- [x] Farmer management (profiles, listings, WA message log)
+- [x] Driver management (profiles, trust tier, document verification)
+- [x] Inventory management (approve, expire, edit)
+- [x] Disputes queue (GPS loss alerts, OTP failures)
+- [x] Ledger view (who is owed what, manual disbursement log)
 - [ ] Manual WhatsApp send to any farmer/driver
 
 **Definition of Done:** You can fully operate the business from the admin panel alone.
