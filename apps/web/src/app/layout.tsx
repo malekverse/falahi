@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import Link from 'next/link'
 import './globals.css'
 import { Providers } from './providers'
 import { NavBar } from '@/components/NavBar'
@@ -27,6 +28,12 @@ export default function RootLayout({
         <Providers>
           <NavBar />
           {children}
+          <footer className="border-t border-gray-200 bg-white py-6 text-center text-sm text-gray-500">
+            <div className="flex items-center justify-center gap-4">
+              <Link href="/privacy" className="hover:text-green-600">Confidentialité</Link>
+              <Link href="/terms" className="hover:text-green-600">Conditions</Link>
+            </div>
+          </footer>
         </Providers>
       </body>
     </html>

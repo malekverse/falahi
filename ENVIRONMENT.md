@@ -58,6 +58,11 @@ LLM_PROVIDER=claude
 NEXT_PUBLIC_APP_URL=https://filahi.tn                  # Production
 # NEXT_PUBLIC_APP_URL=http://localhost:3000             # Development
 
+# ─── Error Monitoring (Sentry) ────────────────────────────────────────────
+# Create project at https://sentry.io → Get DSN from Settings → Client Keys (DSN)
+# Free tier: 5k errors/month, 1 user
+SENTRY_DSN=https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@xxxxxxxx.ingest.us.sentry.io/1234567
+
 # Commission rate (as a decimal)
 PLATFORM_COMMISSION_RATE=0.12
 

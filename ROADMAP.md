@@ -131,7 +131,7 @@
 - [x] Terms of service published
 - [ ] WA message templates approved by Meta
 - [x] Admin can process manual D17 payouts
-- [ ] Error monitoring configured (Sentry free tier)
+- [x] Error monitoring configured (Sentry free tier)
 - [ ] Weekly automated DB backup confirmed
 - [x] Dispute resolution process documented
 
