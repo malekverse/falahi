@@ -9,6 +9,7 @@ export const ar: Translations = {
     howItWorks: 'كيف يعمل',
     groupBuys: 'شراء جماعي',
     b2b: 'تجاري',
+    profile: 'الملف الشخصي',
   },
   marketplace: {
     title: 'السوق',

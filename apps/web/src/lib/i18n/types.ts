@@ -7,6 +7,7 @@ export interface Translations {
     howItWorks: string
     groupBuys: string
     b2b: string
+    profile: string
   }
   marketplace: {
     title: string

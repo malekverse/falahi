@@ -31,6 +31,9 @@ export function NavBar() {
           <Link href="/orders" className="btn-ghost text-xs sm:text-sm">
             {t.nav.orders}
           </Link>
+          <Link href="/profile" className="btn-ghost text-xs sm:text-sm">
+            {t.nav.profile}
+          </Link>
           <Link href="/cart" className="relative ml-2 flex items-center gap-1 rounded-full border border-cream-200 px-3 py-1.5 text-xs transition-colors hover:border-olive-400 hover:text-olive-700 sm:text-sm">
             🛒
             {itemCount > 0 && (

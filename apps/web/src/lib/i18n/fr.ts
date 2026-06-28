@@ -9,6 +9,7 @@ export const fr: Translations = {
     howItWorks: 'Comment ça marche',
     groupBuys: 'Groupés',
     b2b: 'B2B',
+    profile: 'Profil',
   },
   marketplace: {
     title: 'Marché',
