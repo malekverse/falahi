@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import './globals.css'
@@ -10,12 +10,15 @@ export const metadata: Metadata = {
   title: 'Filahi — سوق الفلاحين',
   description: 'Le marché des producteurs tunisiens. Produits frais, de la ferme à votre table.',
   manifest: '/manifest.json',
-  themeColor: '#2d6a4f',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'Filahi',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#2d6a4f',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
