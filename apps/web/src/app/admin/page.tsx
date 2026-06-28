@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { StaleTripsAlert } from '@/components/admin/StaleTripsAlert'
 
 export default async function AdminDashboardPage() {
   const supabase = await createServerSupabaseClient()
@@ -35,6 +36,9 @@ export default async function AdminDashboardPage() {
            لوحة القيادة — Administration
         </p>
         <h1 className="section-title mt-1 text-3xl">Tableau de bord</h1>
+      </div>
+      <div className="mb-4">
+        <StaleTripsAlert />
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Indicateurs clés">
         {cards.map((card) => (

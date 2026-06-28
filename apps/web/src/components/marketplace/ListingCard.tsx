@@ -3,6 +3,38 @@ import { formatTND } from '@filahi/types'
 import type { Millimes } from '@filahi/types'
 import { FreshnessBar, FairPriceWidget } from '@filahi/ui'
 
+const CATEGORY_EMOJI: Record<string, string> = {
+  vegetables: '🥬',
+  fruit: '🍊',
+  eggs: '🥚',
+  honey: '🍯',
+  olive_oil: '🫒',
+  legumes: '🫘',
+  grains: '🌾',
+  herbs: '🌿',
+}
+
+interface ProductImageProps {
+  imageUrl: string | null | undefined
+  productName: string
+  category: string
+}
+
+function ProductImage({ imageUrl, productName, category }: ProductImageProps) {
+  if (imageUrl) {
+    return (
+      <div className="mb-3 h-36 w-full overflow-hidden rounded-lg bg-cream-100">
+        <img src={imageUrl} alt={productName} className="h-full w-full object-cover" loading="lazy" />
+      </div>
+    )
+  }
+  return (
+    <div className="mb-3 flex h-36 items-center justify-center rounded-lg bg-gradient-to-br from-cream-100 to-cream-200 text-5xl" aria-hidden="true">
+      {CATEGORY_EMOJI[category] ?? '🥗'}
+    </div>
+  )
+}
+
 export interface ListingCardItem {
   id: number
   product_name: string
@@ -15,6 +47,7 @@ export interface ListingCardItem {
   harvest_date: string | null
   shelf_life_days: number | null
   created_at: string
+  image_url?: string | null
 }
 
 export const ListingCard = React.memo(function ListingCard({ item }: { item: ListingCardItem }) {
@@ -24,7 +57,8 @@ export const ListingCard = React.memo(function ListingCard({ item }: { item: Lis
       role="article"
       aria-label={`${item.product_name}, ${item.quantity} ${item.unit}, ${item.platform_price_millimes ? formatTND(item.platform_price_millimes) : ''}, ${item.location_name}`}
     >
-      <div className="p-4 pt-5">
+      <ProductImage imageUrl={item.image_url} productName={item.product_name} category={item.product_category} />
+      <div className="px-4 pb-4">
         <div className="mb-3 flex items-start justify-between">
           <h3 className="text-base font-bold text-ink-900">{item.product_name}</h3>
         </div>
