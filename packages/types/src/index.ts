@@ -63,11 +63,14 @@ export interface InventoryItem {
   id: string
   farmer_id: string
   product_name: string
+  product_category: string
   quantity: number
   unit: string
   location_name: string
   asking_price_millimes: Millimes | null
+  platform_price_millimes: Millimes | null
   harvest_date: string | null
+  shelf_life_days: number | null
   notes: string | null
   status: InventoryStatus
   expires_at: string | null

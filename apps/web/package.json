@@ -12,6 +12,7 @@
   "dependencies": {
     "@filahi/supabase": "workspace:*",
     "@filahi/types": "workspace:*",
+    "@filahi/ui": "workspace:*",
     "@filahi/utils": "workspace:*",
     "@sentry/nextjs": "^10.62.0",
     "@supabase/ssr": "^0.5.0",

@@ -1,5 +1,6 @@
 import { formatTND } from '@filahi/types'
 import type { Millimes } from '@filahi/types'
+import { FreshnessBar } from '@filahi/ui'
 
 interface ListingCardItem {
   id: number
@@ -10,34 +11,15 @@ interface ListingCardItem {
   platform_price_millimes: Millimes | null
   location_name: string
   harvest_date: string | null
+  shelf_life_days: number | null
   created_at: string
 }
 
-function computeFreshness(harvestDate: string | null): {
-  label: string
-  color: string
-} {
-  if (!harvestDate) return { label: 'Récent', color: 'bg-green-100 text-green-800' }
-
-  const daysSinceHarvest = Math.floor(
-    (Date.now() - new Date(harvestDate).getTime()) / (1000 * 60 * 60 * 24),
-  )
-
-  if (daysSinceHarvest <= 2) return { label: 'Très frais', color: 'bg-green-100 text-green-800' }
-  if (daysSinceHarvest <= 5) return { label: 'Frais', color: 'bg-yellow-100 text-yellow-800' }
-  return { label: 'À consommer vite', color: 'bg-red-100 text-red-800' }
-}
-
 export function ListingCard({ item }: { item: ListingCardItem }) {
-  const freshness = computeFreshness(item.harvest_date)
-
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
       <div className="mb-2 flex items-start justify-between">
         <h3 className="text-lg font-semibold">{item.product_name}</h3>
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${freshness.color}`}>
-          {freshness.label}
-        </span>
       </div>
 
       <p className="mb-1 text-sm text-gray-600">
@@ -53,6 +35,10 @@ export function ListingCard({ item }: { item: ListingCardItem }) {
           {formatTND(item.platform_price_millimes)}
         </p>
       )}
+
+      <div className="mb-2">
+        <FreshnessBar harvestDate={item.harvest_date} shelfLifeDays={item.shelf_life_days} />
+      </div>
 
       <div className="text-xs text-gray-400">
         {item.harvest_date && (
