@@ -105,12 +105,17 @@ export interface Trip {
 export interface Order {
   id: string
   buyer_id: string
-  trip_id: string | null
   status: string
-  total_millimes: Millimes
+  total_price_millimes: Millimes
   commission_millimes: Millimes
-  delivery_zone: string | null
+  delivery_zone_id: string | null
+  delivery_address: string | null
+  delivery_notes: string | null
   is_recurring: boolean
+  recurrence_day: number | null
+  recurrence_interval: 'weekly' | 'biweekly' | 'monthly' | null
+  next_recurrence_at: string | null
+  original_order_id: string | null
   created_at: string
   updated_at: string
 }
@@ -135,6 +140,7 @@ export interface OrderItem {
   inventory_item_id: string
   quantity: number
   unit_price_millimes: Millimes
+  total_millimes: Millimes
 }
 
 export type SubTripStatus = 'pending' | 'accepted' | 'in_transit' | 'delivered' | 'settled' | 'disputed'
@@ -164,4 +170,38 @@ export interface DeliveryZone {
   name: string
   boundary: Record<string, unknown>
   is_active: boolean
+}
+
+export type GroupBuyStatus = 'open' | 'fulfilled' | 'cancelled'
+
+export interface GroupBuy {
+  id: string
+  creator_id: string
+  inventory_item_id: number
+  target_quantity: number
+  current_quantity: number
+  unit: string
+  unit_price_millimes: Millimes
+  status: GroupBuyStatus
+  expires_at: string
+  created_at: string
+  fulfilled_at: string | null
+  cancelled_at: string | null
+}
+
+export interface GroupBuyWithItem extends Omit<GroupBuy, 'inventory_item_id'> {
+  inventory_item_id: number
+  product_name: string
+  product_category: string
+  creator_name: string | null
+  creator_location: string | null
+  item_image_url: string | null
+}
+
+export interface GroupBuyParticipant {
+  id: number
+  group_buy_id: string
+  buyer_id: string
+  quantity: number
+  created_at: string
 }

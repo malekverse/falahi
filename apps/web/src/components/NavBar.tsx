@@ -17,6 +17,12 @@ export function NavBar() {
           <Link href="/marketplace" className="btn-ghost text-xs sm:text-sm">
             {t.nav.marketplace}
           </Link>
+          <Link href="/group-buys" className="btn-ghost text-xs sm:text-sm">
+            {t.nav.groupBuys}
+          </Link>
+          <Link href="/b2b" className="btn-ghost text-xs sm:text-sm">
+            {t.nav.b2b}
+          </Link>
           <Link href="/how-it-works" className="btn-ghost text-xs sm:text-sm">
             {t.nav.howItWorks}
           </Link>

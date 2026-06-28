@@ -7,6 +7,8 @@ export const ar: Translations = {
     logout: 'تسجيل الخروج',
     orders: 'طلباتي',
     howItWorks: 'كيف يعمل',
+    groupBuys: 'شراء جماعي',
+    b2b: 'تجاري',
   },
   marketplace: {
     title: 'السوق',

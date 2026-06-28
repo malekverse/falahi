@@ -19,6 +19,19 @@ export const InventoryUpdateSchema = z.object({
   quantity: z.number().positive().optional(),
 })
 
+export const CreateGroupBuySchema = z.object({
+  inventoryItemId: z.number().positive(),
+  targetQuantity: z.number().positive(),
+  unit: z.string().min(1).max(20),
+  unitPriceMillimes: z.number().int().positive(),
+  expiresInHours: z.number().int().min(1).max(168).default(48),
+})
+
+export const JoinGroupBuySchema = z.object({
+  groupBuyId: z.string().uuid(),
+  quantity: z.number().positive(),
+})
+
 export type OrderCreateInput = z.infer<typeof OrderCreateSchema>
 export type WhatsAppSendInput = z.infer<typeof WhatsAppSendSchema>
 export type InventoryUpdateInput = z.infer<typeof InventoryUpdateSchema>

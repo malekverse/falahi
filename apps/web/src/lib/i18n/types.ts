@@ -5,6 +5,8 @@ export interface Translations {
     logout: string
     orders: string
     howItWorks: string
+    groupBuys: string
+    b2b: string
   }
   marketplace: {
     title: string

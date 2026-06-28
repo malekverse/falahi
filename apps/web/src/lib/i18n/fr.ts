@@ -7,6 +7,8 @@ export const fr: Translations = {
     logout: 'Déconnexion',
     orders: 'Mes commandes',
     howItWorks: 'Comment ça marche',
+    groupBuys: 'Groupés',
+    b2b: 'B2B',
   },
   marketplace: {
     title: 'Marché',
