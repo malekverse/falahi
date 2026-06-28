@@ -26,6 +26,17 @@ export async function downloadMetaMedia(mediaId: string): Promise<ArrayBuffer> {
   return audioResp.arrayBuffer()
 }
 
+async function fetchWithRetry(url: string, options: RequestInit, retries = 3): Promise<Response> {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    const response = await fetch(url, options)
+    if (response.ok || response.status < 500) return response
+    if (attempt < retries - 1) {
+      await new Promise((r) => setTimeout(r, 1000 * 2 ** attempt))
+    }
+  }
+  throw new Error('Max retries exceeded')
+}
+
 export async function sendWhatsAppMessage(waId: string, text: string) {
   const phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID
   if (!phoneNumberId) {
@@ -33,7 +44,7 @@ export async function sendWhatsAppMessage(waId: string, text: string) {
     return
   }
 
-  await fetch(
+  const response = await fetchWithRetry(
     `${API_BASE}/${phoneNumberId}/messages`,
     {
       method: 'POST',
@@ -46,6 +57,11 @@ export async function sendWhatsAppMessage(waId: string, text: string) {
       }),
     },
   )
+
+  if (!response.ok) {
+    const errText = await response.text()
+    throw new Error(`WhatsApp send failed (${response.status}): ${errText}`)
+  }
 }
 
 export async function sendConfirmationButton(

@@ -1,26 +1,40 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { calculateCommission, calculateFinalPrice } from '@filahi/utils'
+import { OrderCreateSchema } from '@/lib/validation'
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createServerSupabaseClient()
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { inventoryItemId, quantity, deliveryAddress, notes } = await request.json()
+    const rawBody = await request.json()
+    const parsed = OrderCreateSchema.safeParse(rawBody)
 
-    if (!inventoryItemId || !quantity) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Missing required fields: inventoryItemId, quantity' },
+        { error: 'Validation failed', details: parsed.error.flatten() },
         { status: 400 },
       )
+    }
+
+    const { inventoryItemId, quantity, deliveryAddress, deliveryNotes, idempotencyKey } = parsed.data
+
+    // Idempotency check
+    if (idempotencyKey) {
+      const { data: existing } = await supabase
+        .from('orders')
+        .select('id')
+        .eq('id', idempotencyKey)
+        .single()
+
+      if (existing) {
+        return NextResponse.json({ orderId: existing.id, cached: true })
+      }
     }
 
     const { data: item } = await supabase
@@ -38,16 +52,22 @@ export async function POST(request: NextRequest) {
     const totalMillimes = unitPriceMillimes * Math.round(quantity)
     const commissionMillimes = calculateCommission(totalMillimes)
 
+    const orderInsert: Record<string, unknown> = {
+      buyer_id: user.id,
+      status: 'pending',
+      total_price_millimes: totalMillimes + commissionMillimes,
+      commission_millimes: commissionMillimes,
+      delivery_address: deliveryAddress,
+      delivery_notes: deliveryNotes,
+    }
+
+    if (idempotencyKey) {
+      orderInsert.id = idempotencyKey
+    }
+
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert({
-        buyer_id: user.id,
-        status: 'pending',
-        total_price_millimes: totalMillimes + commissionMillimes,
-        commission_millimes: commissionMillimes,
-        delivery_address: deliveryAddress,
-        delivery_notes: notes,
-      })
+      .insert(orderInsert)
       .select()
       .single()
 

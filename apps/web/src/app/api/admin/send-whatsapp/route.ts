@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { sendWhatsAppMessage } from '@filahi/utils'
+import { WhatsAppSendSchema } from '@/lib/validation'
 
 export async function POST(req: NextRequest) {
   const supabase = await createServerSupabaseClient()
@@ -20,11 +21,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Accès réservé aux administrateurs' }, { status: 403 })
   }
 
-  const { to, message } = await req.json()
+  const rawBody = await req.json()
+  const parsed = WhatsAppSendSchema.safeParse(rawBody)
 
-  if (!to || !message) {
-    return NextResponse.json({ error: 'Numéro et message requis' }, { status: 400 })
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Validation échouée', details: parsed.error.flatten() },
+      { status: 400 },
+    )
   }
+
+  const { to, message } = parsed.data
 
   try {
     await sendWhatsAppMessage(to, message)
