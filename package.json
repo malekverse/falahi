@@ -1,6 +1,7 @@
 {
   "name": "filahi",
   "private": true,
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
     "dev:web": "pnpm --filter web dev",
     "dev:driver": "pnpm --filter driver start",

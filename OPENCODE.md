@@ -39,6 +39,20 @@ You are running with no human present. This supersedes any earlier session's cau
 
 ---
 
+## MCP Tool Usage
+
+- For ALL Supabase schema/migration/RLS work, use the `supabase` MCP tools
+  (apply_migration, execute_sql) instead of guessing CLI syntax via bash.
+  Always check actual table/RLS state before assuming a migration worked.
+- Before marking any UI-facing ROADMAP item done, use `playwright` to load
+  the actual page and verify it renders and the interaction works — not
+  just that `pnpm typecheck` passes.
+- When implementing against Next.js App Router, Expo SDK, or the Supabase
+  JS client and you're not 100% certain of current API shape, use `context7`
+  to check rather than relying on memory.
+
+---
+
 ## How to Start (Every Session)
 
 Run this exact sequence at the beginning of every OpenCode session, no exceptions:
