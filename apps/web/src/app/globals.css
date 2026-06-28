@@ -1,3 +1,93 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream-50 text-ink-900 font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5 {
+    @apply font-display;
+  }
+
+  ::selection {
+    @apply bg-olive-200 text-olive-900;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl bg-white shadow-sm ring-1 ring-cream-200 transition-all duration-200;
+  }
+  .card:hover {
+    @apply shadow-md -translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-olive-700 px-5 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-olive-600 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-olive-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-cream-200 bg-white px-5 py-2.5 text-sm font-medium text-ink-700 transition-all duration-150 hover:bg-cream-50 hover:border-cream-300 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-olive-400 focus:ring-offset-2;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-ink-600 transition-all duration-150 hover:bg-cream-100 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-olive-400;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-green {
+    @apply badge bg-olive-100 text-olive-800;
+  }
+
+  .badge-gold {
+    @apply badge bg-gold-300/20 text-gold-500;
+  }
+
+  .badge-red {
+    @apply badge bg-terra-300/10 text-terra-500;
+  }
+
+  .badge-gray {
+    @apply badge bg-cream-100 text-ink-500;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-500 transition-colors duration-150 focus:border-olive-400 focus:outline-none focus:ring-2 focus:ring-olive-100;
+  }
+
+  .section-title {
+    @apply font-display text-2xl font-bold tracking-tight text-ink-900;
+  }
+
+  .zellij-pattern {
+    background-image:
+      linear-gradient(45deg, #e5ddd0 25%, transparent 25%),
+      linear-gradient(-45deg, #e5ddd0 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #e5ddd0 75%),
+      linear-gradient(-45deg, transparent 75%, #e5ddd0 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+
+  .olive-branch-divider {
+    @apply relative my-12 text-center;
+  }
+  .olive-branch-divider::before {
+    content: '';
+    @apply absolute left-0 top-1/2 block h-px w-full -translate-y-1/2 bg-cream-200;
+  }
+  .olive-branch-divider span {
+    @apply relative z-10 inline-block bg-cream-50 px-4 text-lg;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

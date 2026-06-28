@@ -20,28 +20,27 @@ export default async function AdminDashboardPage() {
   ])
 
   const cards = [
-    { label: 'Trajets actifs', value: activeTrips ?? 0, color: 'bg-blue-500' },
-    { label: 'Commandes en attente', value: pendingOrders ?? 0, color: 'bg-yellow-500' },
-    { label: 'Produits disponibles', value: available ?? 0, color: 'bg-green-500' },
-    { label: 'Litiges ouverts', value: openDisputes ?? 0, color: 'bg-red-500' },
-    { label: 'Agriculteurs', value: farmers ?? 0, color: 'bg-purple-500' },
-    { label: 'Chauffeurs', value: drivers ?? 0, color: 'bg-indigo-500' },
+    { label: 'Trajets actifs', value: activeTrips ?? 0, accent: 'border-l-olive-700' },
+    { label: 'Commandes en attente', value: pendingOrders ?? 0, accent: 'border-l-gold-500' },
+    { label: 'Produits disponibles', value: available ?? 0, accent: 'border-l-olive-500' },
+    { label: 'Litiges ouverts', value: openDisputes ?? 0, accent: 'border-l-terra-500' },
+    { label: 'Agriculteurs', value: farmers ?? 0, accent: 'border-l-olive-400' },
+    { label: 'Chauffeurs', value: drivers ?? 0, accent: 'border-l-olive-600' },
   ]
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Tableau de bord</h1>
+      <h1 className="section-title mb-8">Tableau de bord</h1>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Indicateurs clés">
         {cards.map((card) => (
           <div
             key={card.label}
-            className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+            className={`card border-l-4 p-5 ${card.accent}`}
             role="listitem"
             aria-label={`${card.label}: ${card.value}`}
           >
-            <div className={`mb-2 h-2 w-12 rounded ${card.color}`} aria-hidden="true" />
-            <p className="text-2xl font-bold" aria-label={`${card.value} ${card.label}`}>{card.value}</p>
-            <p className="text-sm text-gray-500">{card.label}</p>
+            <p className="font-display text-3xl font-bold text-ink-900">{card.value}</p>
+            <p className="mt-1 text-sm text-ink-500">{card.label}</p>
           </div>
         ))}
       </div>

@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 
 const NAV_ITEMS = [
@@ -11,29 +14,40 @@ const NAV_ITEMS = [
   { href: '/admin/ledger', label: 'Comptabilité' },
   { href: '/admin/whatsapp', label: 'WhatsApp' },
   { href: '/admin/payouts', label: 'Paiements D17' },
-  { href: '/admin/zones', label: 'Zones de livraison' },
+  { href: '/admin/zones', label: 'Zones' },
 ]
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <aside className="w-56 border-r border-gray-200 bg-white p-4">
-        <Link href="/admin" className="mb-6 block text-lg font-bold text-green-700">
+    <div className="-mx-4 -mt-8 flex min-h-[calc(100vh-4rem)] sm:-mx-6">
+      <aside className="hidden w-56 shrink-0 border-r border-cream-200 bg-cream-50 p-4 lg:block">
+        <Link href="/admin" className="mb-6 block font-display text-lg font-bold tracking-tight text-olive-900">
           Filahi Admin
         </Link>
-        <nav className="flex flex-col gap-1">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="flex flex-col gap-0.5">
+          {NAV_ITEMS.map((item) => {
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-lg px-3 py-2 text-sm transition-colors ${
+                  isActive
+                    ? 'bg-olive-700 font-medium text-white'
+                    : 'text-ink-600 hover:bg-cream-100 hover:text-ink-900'
+                }`}
+              >
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
       </aside>
-      <main className="flex-1 p-6">{children}</main>
+      <main className="flex-1 overflow-x-auto bg-cream-50 p-4 sm:p-6 lg:p-8">
+        {children}
+      </main>
     </div>
   )
 }

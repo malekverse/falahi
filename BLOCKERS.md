@@ -89,6 +89,27 @@
 
 ---
 
+## All Code-Level Items Complete
+
+Every enhancement and feature that can be built without a live Supabase DB, WhatsApp API key, AI API key, EAS build, or Sentry DSN has been implemented and committed. Remaining unchecked ROADMAP items:
+
+- **Phase 0** (5 items): Supabase project, migrations, types, RLS tests, auth config
+- **Phase 6** (2 items): WA templates, DB backup
+- **Phase 7** (23 items): All post-revenue features
+
+These items require human action at the services listed below. Once the Supabase project is created and keys added, run:
+
+```bash
+supabase link --project-ref <ref>
+supabase db push
+pnpm db:generate-types
+pnpm typecheck
+```
+
+Then proceed with Phase 0 remaining items.
+
+---
+
 ## Summary
 
 | Blocker | Blocks | Human Action Required |

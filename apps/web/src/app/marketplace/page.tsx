@@ -31,8 +31,13 @@ export default async function MarketplacePage({
   const { data: initialListings } = await query
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Marché</h1>
+    <div>
+      <div className="mb-8">
+        <p className="font-display text-xs font-medium uppercase tracking-[0.15em] text-gold-500">
+          فلاحي — Marché
+        </p>
+        <h1 className="section-title mt-1">Produits disponibles</h1>
+      </div>
 
       <Filters />
 

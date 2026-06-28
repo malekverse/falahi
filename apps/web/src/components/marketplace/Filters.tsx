@@ -39,8 +39,8 @@ export function Filters() {
           onClick={() => setCategory(cat.value)}
           className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
             currentCategory === cat.value
-              ? 'bg-green-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-olive-700 text-white'
+              : 'bg-cream-100 text-ink-700 hover:bg-cream-200'
           }`}
         >
           {cat.label}
