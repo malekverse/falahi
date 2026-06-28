@@ -2,6 +2,7 @@ import React from 'react'
 import { formatTND } from '@filahi/types'
 import type { Millimes } from '@filahi/types'
 import { FreshnessBar, FairPriceWidget } from '@filahi/ui'
+import { useCart } from '@/lib/cart-context'
 
 const CATEGORY_EMOJI: Record<string, string> = {
   vegetables: '🥬',
@@ -48,9 +49,12 @@ export interface ListingCardItem {
   shelf_life_days: number | null
   created_at: string
   image_url?: string | null
+  farmer_id?: string
 }
 
 export const ListingCard = React.memo(function ListingCard({ item }: { item: ListingCardItem }) {
+  const { addItem } = useCart()
+
   return (
     <div
       className="market-card"
@@ -91,7 +95,27 @@ export const ListingCard = React.memo(function ListingCard({ item }: { item: Lis
           <FreshnessBar harvestDate={item.harvest_date} shelfLifeDays={item.shelf_life_days} />
         </div>
 
-        <div className="text-[11px] text-ink-400">
+        <button
+          type="button"
+          onClick={() =>
+            addItem({
+              inventoryItemId: item.id,
+              productName: item.product_name,
+              category: item.product_category,
+              quantity: 1,
+              unit: item.unit,
+              unitPriceMillimes: item.platform_price_millimes ?? item.asking_price_millimes ?? 0,
+              locationName: item.location_name,
+              farmerId: item.farmer_id ?? '',
+            })
+          }
+          className="btn-primary mt-3 w-full text-sm"
+          aria-label={`Ajouter ${item.product_name} au panier`}
+        >
+          + Ajouter
+        </button>
+
+        <div className="mt-2 text-[11px] text-ink-400">
           {item.harvest_date && (
             <span>Récolté le {new Date(item.harvest_date).toLocaleDateString('fr-TN')}</span>
           )}

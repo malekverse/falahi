@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
   let query = supabase
     .from('inventory_items')
-    .select('*', { count: 'exact' })
+    .select('*, farmer_id', { count: 'exact' })
     .eq('status', 'available')
     .order('created_at', { ascending: false })
     .range(offset, offset + PAGE_LIMIT - 1)
