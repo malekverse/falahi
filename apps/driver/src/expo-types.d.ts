@@ -57,6 +57,17 @@ declare module 'expo-task-manager' {
   export function unregisterTaskAsync(taskName: string): Promise<void>
 }
 
+declare module 'expo-haptics' {
+  export enum ImpactFeedbackStyle {
+    Light = 'light',
+    Medium = 'medium',
+    Heavy = 'heavy',
+  }
+  export function impactAsync(style: ImpactFeedbackStyle): Promise<void>
+  export function notificationAsync(type: 'success' | 'warning' | 'error'): Promise<void>
+  export function selectionAsync(): Promise<void>
+}
+
 declare module 'expo-secure-store' {
   export function getItemAsync(key: string): Promise<string | null>
   export function setItemAsync(key: string, value: string): Promise<void>
