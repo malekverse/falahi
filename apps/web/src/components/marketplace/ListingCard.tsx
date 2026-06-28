@@ -1,7 +1,7 @@
 import React from 'react'
 import { formatTND } from '@filahi/types'
 import type { Millimes } from '@filahi/types'
-import { FreshnessBar } from '@filahi/ui'
+import { FreshnessBar, FairPriceWidget } from '@filahi/ui'
 
 interface ListingCardItem {
   id: number
@@ -9,6 +9,7 @@ interface ListingCardItem {
   product_category: string
   quantity: number
   unit: string
+  asking_price_millimes: Millimes | null
   platform_price_millimes: Millimes | null
   location_name: string
   harvest_date: string | null
@@ -32,9 +33,18 @@ export const ListingCard = React.memo(function ListingCard({ item }: { item: Lis
       </p>
 
       {item.platform_price_millimes && (
-        <p className="mb-3 text-xl font-bold text-green-700">
+        <p className="mb-2 text-xl font-bold text-green-700">
           {formatTND(item.platform_price_millimes)}
         </p>
+      )}
+
+      {item.asking_price_millimes && (
+        <div className="mb-2">
+          <FairPriceWidget
+            askingPriceMillimes={item.asking_price_millimes}
+            platformPriceMillimes={item.platform_price_millimes}
+          />
+        </div>
       )}
 
       <div className="mb-2">

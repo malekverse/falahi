@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { sendWhatsAppMessage } from '@filahi/utils'
+import { useSearchParams } from 'next/navigation'
 
 const TEMPLATES = [
   { id: 'listing_confirmed', label: 'Listing confirmé', body: 'Salam aalikom. Votre produit {product} a été confirmé et publié sur le marché.' },
@@ -12,11 +13,17 @@ const TEMPLATES = [
 ]
 
 export default function AdminWhatsAppPage() {
+  const searchParams = useSearchParams()
   const [recipientPhone, setRecipientPhone] = useState('')
   const [messageBody, setMessageBody] = useState('')
   const [selectedTemplate, setSelectedTemplate] = useState('')
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
+
+  useEffect(() => {
+    const to = searchParams.get('to')
+    if (to) setRecipientPhone(to)
+  }, [searchParams])
 
   function applyTemplate(templateId: string) {
     setSelectedTemplate(templateId)

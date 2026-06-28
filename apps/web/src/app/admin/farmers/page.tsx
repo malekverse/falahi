@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 export default async function AdminFarmersPage() {
   const supabase = await createServerSupabaseClient()
@@ -21,6 +22,7 @@ export default async function AdminFarmersPage() {
               <th className="px-4 py-3 font-medium">Téléphone</th>
               <th className="px-4 py-3 font-medium">WhatsApp</th>
               <th className="px-4 py-3 font-medium">Inscrit le</th>
+              <th className="px-4 py-3 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -31,6 +33,14 @@ export default async function AdminFarmersPage() {
                 <td className="px-4 py-3 font-mono text-xs">{farmer.whatsapp_id || '-'}</td>
                 <td className="px-4 py-3 text-gray-500">
                   {new Date(farmer.created_at).toLocaleDateString('fr-TN')}
+                </td>
+                <td className="px-4 py-3">
+                  <Link
+                    href={`/admin/whatsapp?to=${farmer.phone_number?.replace(/^\+?216/, '') || ''}`}
+                    className="rounded bg-green-600 px-2 py-1 text-xs text-white hover:bg-green-700"
+                  >
+                    WhatsApp
+                  </Link>
                 </td>
               </tr>
             ))}

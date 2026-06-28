@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 export default async function AdminDriversPage() {
   const supabase = await createServerSupabaseClient()
@@ -24,6 +25,7 @@ export default async function AdminDriversPage() {
               <th className="px-4 py-3 font-medium">Score</th>
               <th className="px-4 py-3 font-medium">Trajets</th>
               <th className="px-4 py-3 font-medium">Vérifié</th>
+              <th className="px-4 py-3 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -40,6 +42,14 @@ export default async function AdminDriversPage() {
                   {driver.is_verified
                     ? <span className="text-green-600">✓</span>
                     : <span className="text-red-400">—</span>}
+                </td>
+                <td className="px-4 py-3">
+                  <Link
+                    href={`/admin/whatsapp?to=${(driver.profiles?.phone_number || '').replace(/^\+?216/, '')}`}
+                    className="rounded bg-green-600 px-2 py-1 text-xs text-white hover:bg-green-700"
+                  >
+                    WhatsApp
+                  </Link>
                 </td>
               </tr>
             ))}
