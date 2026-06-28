@@ -4,90 +4,145 @@
 
 @layer base {
   body {
-    @apply bg-cream-50 text-ink-900 font-body antialiased;
+    @apply bg-cream-50 text-ink-900 antialiased;
+    font-family: var(--font-tajawal), system-ui, sans-serif;
   }
 
   h1, h2, h3, h4, h5 {
-    @apply font-display;
+    font-family: var(--font-tajawal), Georgia, serif;
+    @apply font-bold tracking-tight;
   }
 
   ::selection {
     @apply bg-olive-200 text-olive-900;
   }
+
+  /* Subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-cream-50;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-cream-300;
+  }
 }
 
 @layer components {
   .card {
-    @apply rounded-2xl bg-white shadow-sm ring-1 ring-cream-200 transition-all duration-200;
+    @apply rounded-2xl bg-white shadow-sm ring-1 ring-cream-200 transition-all duration-300;
   }
   .card:hover {
-    @apply shadow-md -translate-y-0.5;
+    @apply shadow-lg -translate-y-1 ring-cream-300;
+  }
+
+  /* Market stall card — for listing cards */
+  .market-card {
+    @apply relative overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-cream-200 transition-all duration-300;
+  }
+  .market-card::before {
+    content: '';
+    @apply absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-olive-700 via-gold-500 to-olive-700 opacity-70;
+  }
+  .market-card:hover {
+    @apply shadow-xl -translate-y-1.5 ring-olive-200;
+  }
+  .market-card:hover::before {
+    @apply opacity-100;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-olive-700 px-5 py-2.5 text-sm font-medium text-white transition-all duration-150 hover:bg-olive-600 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-olive-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center rounded-xl bg-olive-700 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-150 hover:bg-olive-600 hover:shadow-md active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-olive-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl border border-cream-200 bg-white px-5 py-2.5 text-sm font-medium text-ink-700 transition-all duration-150 hover:bg-cream-50 hover:border-cream-300 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-olive-400 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center rounded-xl border border-cream-200 bg-white px-5 py-2.5 text-sm font-medium text-ink-700 shadow-sm transition-all duration-150 hover:border-olive-300 hover:bg-cream-50 hover:shadow-sm active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-olive-400 focus:ring-offset-2;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-ink-600 transition-all duration-150 hover:bg-cream-100 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-olive-400;
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-ink-500 transition-all duration-150 hover:bg-cream-100 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-olive-400;
   }
 
   .badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
-
-  .badge-green {
-    @apply badge bg-olive-100 text-olive-800;
-  }
-
-  .badge-gold {
-    @apply badge bg-gold-300/20 text-gold-500;
-  }
-
-  .badge-red {
-    @apply badge bg-terra-300/10 text-terra-500;
-  }
-
-  .badge-gray {
-    @apply badge bg-cream-100 text-ink-500;
-  }
+  .badge-green { @apply badge bg-olive-100 text-olive-800; }
+  .badge-gold { @apply badge bg-amber-100 text-amber-800; }
+  .badge-red { @apply badge bg-red-100 text-red-800; }
+  .badge-gray { @apply badge bg-cream-100 text-ink-500; }
 
   .input-field {
-    @apply w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-500 transition-colors duration-150 focus:border-olive-400 focus:outline-none focus:ring-2 focus:ring-olive-100;
+    @apply w-full rounded-xl border border-cream-200 bg-white px-4 py-2.5 text-sm text-ink-900 transition-all duration-150 placeholder:text-ink-400 focus:border-olive-500 focus:outline-none focus:ring-2 focus:ring-olive-100;
   }
 
   .section-title {
-    @apply font-display text-2xl font-bold tracking-tight text-ink-900;
+    @apply text-2xl font-bold tracking-tight text-ink-900;
   }
 
-  .zellij-pattern {
+  /* Zellij geometric pattern */
+  .zellij-bg {
     background-image:
-      linear-gradient(45deg, #e5ddd0 25%, transparent 25%),
-      linear-gradient(-45deg, #e5ddd0 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, #e5ddd0 75%),
-      linear-gradient(-45deg, transparent 75%, #e5ddd0 75%);
-    background-size: 20px 20px;
-    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      linear-gradient(45deg, rgba(229,221,208,0.4) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(229,221,208,0.4) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(229,221,208,0.4) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(229,221,208,0.4) 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
   }
 
-  .olive-branch-divider {
-    @apply relative my-12 text-center;
+  /* Solid zellij for dark backgrounds */
+  .zellij-bg-solid {
+    background-image:
+      linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
   }
-  .olive-branch-divider::before {
+
+  .divider-leaf {
+    @apply relative my-14 text-center;
+  }
+  .divider-leaf::before {
     content: '';
-    @apply absolute left-0 top-1/2 block h-px w-full -translate-y-1/2 bg-cream-200;
+    @apply absolute left-0 top-1/2 block h-px w-full -translate-y-1/2 bg-gradient-to-r from-transparent via-cream-300 to-transparent;
   }
-  .olive-branch-divider span {
+  .divider-leaf span {
     @apply relative z-10 inline-block bg-cream-50 px-4 text-lg;
+  }
+
+  /* Price tag style */
+  .price-tag {
+    @apply inline-block rounded-lg bg-gradient-to-br from-olive-50 to-olive-100 px-3 py-1 font-bold text-olive-800 shadow-sm ring-1 ring-olive-200;
+  }
+
+  /* Hero gradient */
+  .hero-gradient {
+    @apply bg-gradient-to-br from-olive-900 via-olive-800 to-olive-900;
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .text-balance { text-wrap: balance; }
+
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out forwards;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+  .animate-stagger-1 { animation-delay: 0.05s; }
+  .animate-stagger-2 { animation-delay: 0.1s; }
+  .animate-stagger-3 { animation-delay: 0.15s; }
+  .animate-stagger-4 { animation-delay: 0.2s; }
 }

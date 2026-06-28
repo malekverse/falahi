@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import './globals.css'
+import { tajawal } from '@/lib/fonts'
 import { Providers } from './providers'
 import { NavBar } from '@/components/NavBar'
 
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={tajawal.variable}>
       <body>
         <Providers>
           <NavBar />
@@ -28,8 +29,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </main>
           <footer className="border-t border-cream-200 bg-cream-100 py-10">
             <div className="mx-auto flex max-w-app flex-col items-center gap-4 px-4 sm:flex-row sm:justify-between sm:px-6">
-              <Link href="/marketplace" className="font-display text-lg font-bold tracking-tight text-olive-900">
-                Filahi
+              <Link href="/" className="text-lg font-bold tracking-tight text-olive-900">
+                فلاحي <span className="font-normal text-ink-400">|</span>{' '}
+                <span className="text-sm font-normal text-ink-500">Filahi</span>
               </Link>
               <div className="flex items-center gap-6">
                 <Link href="/how-it-works" className="text-sm text-ink-500 transition-colors hover:text-olive-700">Comment ça marche</Link>
@@ -37,8 +39,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <Link href="/terms" className="text-sm text-ink-500 transition-colors hover:text-olive-700">Conditions</Link>
               </div>
             </div>
-            <p className="mt-6 text-center text-xs text-ink-500">
-              &copy; {new Date().getFullYear()} Filahi — فلاحي. Tous droits réservés.
+            <p className="mt-6 text-center text-[11px] text-ink-400">
+              &copy; {new Date().getFullYear()} فلاحي — Filahi. Tous droits réservés.
             </p>
           </footer>
         </Providers>
