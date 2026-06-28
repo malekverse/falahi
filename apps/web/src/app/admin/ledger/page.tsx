@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { formatTND } from '@filahi/types'
+import { CsvExportButton } from './client'
 
 export default async function AdminLedgerPage() {
   const supabase = await createServerSupabaseClient()
@@ -16,10 +17,15 @@ export default async function AdminLedgerPage() {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold">Comptabilité</h1>
-      <p className="mb-6 text-lg text-gray-600">
-        Revenu total commission: <span className="font-bold text-green-700">{formatTND(totalRevenue)}</span>
-      </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="mb-2 text-2xl font-bold">Comptabilité</h1>
+          <p className="text-lg text-gray-600">
+            Revenu total commission: <span className="font-bold text-green-700">{formatTND(totalRevenue)}</span>
+          </p>
+        </div>
+        <CsvExportButton entries={entries || []} />
+      </div>
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
         <table className="w-full text-left text-sm">

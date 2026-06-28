@@ -1,3 +1,4 @@
+import React from 'react'
 import { formatTND } from '@filahi/types'
 import type { Millimes } from '@filahi/types'
 import { FreshnessBar } from '@filahi/ui'
@@ -15,7 +16,7 @@ interface ListingCardItem {
   created_at: string
 }
 
-export function ListingCard({ item }: { item: ListingCardItem }) {
+export const ListingCard = React.memo(function ListingCard({ item }: { item: ListingCardItem }) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
       <div className="mb-2 flex items-start justify-between">
@@ -47,4 +48,4 @@ export function ListingCard({ item }: { item: ListingCardItem }) {
       </div>
     </div>
   )
-}
+})
