@@ -55,7 +55,7 @@ export const ListingCard = React.memo(function ListingCard({ item }: { item: Lis
         <FreshnessBar harvestDate={item.harvest_date} shelfLifeDays={item.shelf_life_days} />
       </div>
 
-      <div className="text-xs text-gray-400">
+      <div className="text-xs text-gray-500">
         {item.harvest_date && (
           <span>Récolté le {new Date(item.harvest_date).toLocaleDateString('fr-TN')}</span>
         )}
