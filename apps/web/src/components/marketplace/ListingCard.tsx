@@ -3,7 +3,7 @@ import { formatTND } from '@filahi/types'
 import type { Millimes } from '@filahi/types'
 import { FreshnessBar, FairPriceWidget } from '@filahi/ui'
 
-interface ListingCardItem {
+export interface ListingCardItem {
   id: number
   product_name: string
   product_category: string

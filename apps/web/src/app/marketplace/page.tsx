@@ -1,6 +1,9 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { ListingCard } from '@/components/marketplace/ListingCard'
 import { Filters } from '@/components/marketplace/Filters'
+import { LoadMore } from '@/components/marketplace/LoadMore'
+import type { ListingCardItem } from '@/components/marketplace/ListingCard'
+
+const INITIAL_LIMIT = 12
 
 interface SearchParams {
   category?: string
@@ -19,12 +22,13 @@ export default async function MarketplacePage({
     .select('*')
     .eq('status', 'available')
     .order('created_at', { ascending: false })
+    .limit(INITIAL_LIMIT)
 
   if (params.category) {
     query = query.eq('product_category', params.category)
   }
 
-  const { data: listings } = await query
+  const { data: initialListings } = await query
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -32,17 +36,10 @@ export default async function MarketplacePage({
 
       <Filters />
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {(listings || []).map((item) => (
-          <ListingCard key={item.id} item={item} />
-        ))}
-      </div>
-
-      {(!listings || listings.length === 0) && (
-        <p className="py-12 text-center text-gray-500">
-          Aucun produit disponible pour le moment.
-        </p>
-      )}
+      <LoadMore
+        initialItems={(initialListings || []) as ListingCardItem[]}
+        category={params.category}
+      />
     </div>
   )
 }
