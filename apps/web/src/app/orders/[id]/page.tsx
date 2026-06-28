@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { formatTND } from '@filahi/types'
+import { OrderRatings } from '@/components/orders/OrderRatings'
 
 export default async function OrderDetailPage({
   params,
@@ -19,6 +20,43 @@ export default async function OrderDetailPage({
   if (!order) {
     notFound()
   }
+
+  const tripId = order.trip_id as string | undefined
+
+  let farmerId: string | undefined
+  let farmerName = 'le vendeur'
+  let driverId: string | undefined
+  let driverName: string | undefined
+
+  if (tripId) {
+    const { data: trip } = await supabase
+      .from('trips')
+      .select('farmer_id, driver_id')
+      .eq('id', tripId)
+      .single()
+
+    if (trip) {
+      farmerId = trip.farmer_id
+      const { data: farmer } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', trip.farmer_id)
+        .single()
+      if (farmer) farmerName = farmer.full_name
+
+      driverId = trip.driver_id || undefined
+      if (driverId) {
+        const { data: driver } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', driverId)
+          .single()
+        if (driver) driverName = driver.full_name
+      }
+    }
+  }
+
+  const isDelivered = order.status === 'delivered' || order.status === 'settled'
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
@@ -56,6 +94,19 @@ export default async function OrderDetailPage({
           </div>
         </div>
       ))}
+
+      {isDelivered && tripId && farmerId && (
+        <div className="mt-8">
+          <OrderRatings
+            orderId={id}
+            tripId={tripId}
+            farmerId={farmerId}
+            farmerName={farmerName}
+            driverId={driverId}
+            driverName={driverName}
+          />
+        </div>
+      )}
     </div>
   )
 }

@@ -4,6 +4,7 @@ export interface Translations {
     login: string
     logout: string
     orders: string
+    howItWorks: string
   }
   marketplace: {
     title: string

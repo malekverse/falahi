@@ -6,6 +6,7 @@ export const ar: Translations = {
     login: 'تسجيل الدخول',
     logout: 'تسجيل الخروج',
     orders: 'طلباتي',
+    howItWorks: 'كيف يعمل',
   },
   marketplace: {
     title: 'السوق',

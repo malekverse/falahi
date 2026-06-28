@@ -17,6 +17,9 @@ export function NavBar() {
         <Link href="/marketplace" className="text-sm text-gray-600 hover:text-gray-900">
           {t.nav.marketplace}
         </Link>
+        <Link href="/how-it-works" className="text-sm text-gray-600 hover:text-gray-900">
+          {t.nav.howItWorks}
+        </Link>
         <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">
           {t.nav.login}
         </Link>

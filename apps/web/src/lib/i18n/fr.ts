@@ -6,6 +6,7 @@ export const fr: Translations = {
     login: 'Connexion',
     logout: 'Déconnexion',
     orders: 'Mes commandes',
+    howItWorks: 'Comment ça marche',
   },
   marketplace: {
     title: 'Marché',

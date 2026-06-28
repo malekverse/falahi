@@ -115,6 +115,20 @@ export interface Order {
   updated_at: string
 }
 
+export type RatingTarget = 'driver' | 'farmer' | 'product'
+
+export interface Rating {
+  id: number
+  order_id: string
+  trip_id: string | null
+  reviewer_id: string
+  target_id: string
+  target_type: RatingTarget
+  score: 1 | 2 | 3 | 4 | 5
+  review_text: string | null
+  created_at: string
+}
+
 export interface OrderItem {
   id: string
   order_id: string
