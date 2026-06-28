@@ -1,0 +1,54 @@
+import type { Translations } from './types'
+
+export const ar: Translations = {
+  nav: {
+    marketplace: 'السوق',
+    login: 'تسجيل الدخول',
+    logout: 'تسجيل الخروج',
+    orders: 'طلباتي',
+  },
+  marketplace: {
+    title: 'السوق',
+    noProducts: 'لا توجد منتجات متاحة حالياً.',
+    filters: {
+      all: 'الكل',
+      vegetables: 'خضروات',
+      fruit: 'فواكه',
+      eggs: 'بيض',
+      honey: 'عسل',
+      olive_oil: 'زيت زيتون',
+      legumes: 'بقوليات',
+      grains: 'حبوب',
+      herbs: 'أعشاب',
+    },
+  },
+  listing: {
+    veryFresh: 'طازج جداً',
+    fresh: 'طازج',
+    consumeSoon: 'يستهلك قريباً',
+    recent: 'حديث',
+    harvested: 'تم الحصاد في',
+  },
+  order: {
+    title: 'الطلب',
+    status: 'الحالة',
+    total: 'المجموع',
+    date: 'التاريخ',
+    items: 'المنتجات',
+    pending: 'قيد الانتظار',
+    confirmed: 'مؤكد',
+    inTransit: 'قيد النقل',
+    delivered: 'تم التوصيل',
+    cancelled: 'ملغي',
+    refunded: 'تم الاسترجاع',
+  },
+  login: {
+    title: 'تسجيل الدخول',
+    phoneNumber: 'رقم الهاتف',
+    sendCode: 'استلام الرمز',
+    enterCode: 'الرمز المستلم',
+    verify: 'دخول',
+    sending: 'جاري الإرسال...',
+    verifying: 'جاري التحقق...',
+  },
+}

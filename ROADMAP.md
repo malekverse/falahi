@@ -51,16 +51,16 @@
 
 **Goal:** A restaurant owner in La Marsa can browse listings and place an order.
 
-- [ ] `/marketplace` page with listing grid
-- [ ] Filter by region, category, price
-- [ ] Listing card: product, qty, price, region, freshness
-- [ ] Commission calculation visible in price (not broken out)
-- [ ] Buyer auth (Supabase email/phone login)
-- [ ] Order creation (inventory reserved on order)
-- [ ] Order confirmation page
+- [x] `/marketplace` page with listing grid
+- [x] Filter by region, category, price
+- [x] Listing card: product, qty, price, region, freshness
+- [x] Commission calculation visible in price (not broken out)
+- [x] Buyer auth (Supabase email/phone login)
+- [x] Order creation (inventory reserved on order)
+- [x] Order confirmation page
 - [ ] Recurring order setup (weekly subscription)
-- [ ] French + Arabic language toggle
-- [ ] Mobile responsive (PWA installable)
+- [x] French + Arabic language toggle
+- [x] Mobile responsive (PWA installable)
 
 **Definition of Done:** Place a real order on the marketplace with a real product from Phase 1 bot test.
 

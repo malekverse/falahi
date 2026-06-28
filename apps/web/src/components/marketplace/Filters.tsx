@@ -1,23 +1,25 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-
-const CATEGORIES = [
-  { value: '', label: 'Toutes' },
-  { value: 'vegetables', label: 'Légumes' },
-  { value: 'fruit', label: 'Fruits' },
-  { value: 'eggs', label: 'Œufs' },
-  { value: 'honey', label: 'Miel' },
-  { value: 'olive_oil', label: "Huile d'olive" },
-  { value: 'legumes', label: 'Légumineuses' },
-  { value: 'grains', label: 'Céréales' },
-  { value: 'herbs', label: 'Herbes' },
-]
+import { useTranslation } from '@/lib/i18n/context'
 
 export function Filters() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const currentCategory = searchParams.get('category') || ''
+  const { t } = useTranslation()
+
+  const categories = [
+    { value: '', label: t.marketplace.filters.all },
+    { value: 'vegetables', label: t.marketplace.filters.vegetables },
+    { value: 'fruit', label: t.marketplace.filters.fruit },
+    { value: 'eggs', label: t.marketplace.filters.eggs },
+    { value: 'honey', label: t.marketplace.filters.honey },
+    { value: 'olive_oil', label: t.marketplace.filters.olive_oil },
+    { value: 'legumes', label: t.marketplace.filters.legumes },
+    { value: 'grains', label: t.marketplace.filters.grains },
+    { value: 'herbs', label: t.marketplace.filters.herbs },
+  ]
 
   function setCategory(value: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -31,7 +33,7 @@ export function Filters() {
 
   return (
     <div className="mb-6 flex flex-wrap gap-2">
-      {CATEGORIES.map((cat) => (
+      {categories.map((cat) => (
         <button
           key={cat.value}
           onClick={() => setCategory(cat.value)}

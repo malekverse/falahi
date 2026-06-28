@@ -1,0 +1,54 @@
+import type { Translations } from './types'
+
+export const fr: Translations = {
+  nav: {
+    marketplace: 'Marché',
+    login: 'Connexion',
+    logout: 'Déconnexion',
+    orders: 'Mes commandes',
+  },
+  marketplace: {
+    title: 'Marché',
+    noProducts: 'Aucun produit disponible pour le moment.',
+    filters: {
+      all: 'Toutes',
+      vegetables: 'Légumes',
+      fruit: 'Fruits',
+      eggs: 'Œufs',
+      honey: 'Miel',
+      olive_oil: "Huile d'olive",
+      legumes: 'Légumineuses',
+      grains: 'Céréales',
+      herbs: 'Herbes',
+    },
+  },
+  listing: {
+    veryFresh: 'Très frais',
+    fresh: 'Frais',
+    consumeSoon: 'À consommer vite',
+    recent: 'Récent',
+    harvested: 'Récolté le',
+  },
+  order: {
+    title: 'Commande',
+    status: 'Statut',
+    total: 'Total',
+    date: 'Date',
+    items: 'Articles',
+    pending: 'En attente',
+    confirmed: 'Confirmée',
+    inTransit: 'En transit',
+    delivered: 'Livrée',
+    cancelled: 'Annulée',
+    refunded: 'Remboursée',
+  },
+  login: {
+    title: 'Connexion',
+    phoneNumber: 'Numéro de téléphone',
+    sendCode: 'Recevoir le code',
+    enterCode: 'Code reçu par SMS',
+    verify: 'Se connecter',
+    sending: 'Envoi...',
+    verifying: 'Vérification...',
+  },
+}

@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/lib/i18n/context'
 
 export default function LoginPage() {
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
   const [step, setStep] = useState<'phone' | 'otp'>('phone')
   const [loading, setLoading] = useState(false)
+  const { t } = useTranslation()
 
   const supabase = createClient()
 
@@ -44,12 +46,12 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h1 className="mb-6 text-2xl font-bold">Connexion</h1>
+        <h1 className="mb-6 text-2xl font-bold">{t.login.title}</h1>
 
         {step === 'phone' ? (
           <>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Numéro de téléphone
+              {t.login.phoneNumber}
             </label>
             <input
               type="tel"
@@ -63,13 +65,13 @@ export default function LoginPage() {
               disabled={loading || phone.length < 8}
               className="w-full rounded bg-green-600 px-4 py-2 text-white disabled:opacity-50"
             >
-              {loading ? 'Envoi...' : 'Recevoir le code'}
+              {loading ? t.login.sending : t.login.sendCode}
             </button>
           </>
         ) : (
           <>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Code reçu par SMS
+              {t.login.enterCode}
             </label>
             <input
               type="text"
@@ -84,7 +86,7 @@ export default function LoginPage() {
               disabled={loading || otp.length < 4}
               className="w-full rounded bg-green-600 px-4 py-2 text-white disabled:opacity-50"
             >
-              {loading ? 'Vérification...' : 'Se connecter'}
+              {loading ? t.login.verifying : t.login.verify}
             </button>
           </>
         )}

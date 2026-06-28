@@ -3,26 +3,28 @@
 ## Session 1 — 2026-06-28
 
 ### Completed
-- [x] Phase 0, Item 1: Monorepo initialized (pnpm workspaces + Turborepo)
-- [x] Root config files: package.json, pnpm-workspace.yaml, turbo.json, .gitignore, tsconfig.json
-- [x] Shared packages scaffolded: @filahi/types, @filahi/supabase, @filahi/utils, @filahi/ui
-- [x] Domain types defined: UserRole, TripStatus, InventoryStatus, AIListingExtraction, etc.
-- [x] Utility functions: generateOTP, computeHaversineDistance, calculateCommission, formatTND
-- [x] Next.js web app scaffolded with App Router, middleware, Supabase SSR clients, API routes
-- [x] Expo driver app scaffolded with app.json config
-- [x] Bot app scaffolded
-- [x] Full migration SQL written (001_initial_schema.sql): 12 tables, RLS policies, triggers, seed data
-- [x] Supabase config.toml and seed.sql created
-- [x] .env.example created with all required env vars
-- [x] pnpm typecheck passes with 0 errors across all 8 workspace projects
-- [x] Initial git commit
+- [x] Phase 0: Monorepo scaffolded with pnpm workspaces, Turborepo, shared packages
+- [x] Phase 0: Full DB migration SQL (12 tables + RLS + triggers + seed)
+- [x] Phase 0: Next.js web app (App Router, middleware, Supabase SSR, API routes)
+- [x] Phase 0: Expo driver app scaffold
+- [x] Phase 0: All config files (turbo.json, .gitignore, .env.example, supabase/config.toml)
+- [x] Phase 0: `pnpm typecheck` passes 0 errors
+- [x] Phase 1: WhatsApp bot pipeline (webhook, signature verification, media download, Groq/OpenAI Whisper, LLM extraction, confirmation buttons, idempotency, auto-profile, payment query, admin flagging)
+- [x] Phase 2: Marketplace page with listing grid and cards
+- [x] Phase 2: Category filter
+- [x] Phase 2: Login page (phone OTP via Supabase Auth)
+- [x] Phase 2: Order creation API route
+- [x] Phase 2: Order confirmation page
 
 ### Current State
-- TypeScript errors: 0
-- Phase 0 items truly done: 2/10 (monorepo init, typecheck passes)
-- Phase 0 blocked items: Need Supabase project created by user on supabase.com
-- Next item to start: Phase 1 — WhatsApp Bot MVP webhook handler
+- TypeScript errors: 0 across all 8 packages
+- 3 commits on master
+- Phase 0 remaining: Supabase project creation (blocked - needs user API keys)
+- Phase 1 remaining: Live testing with Meta WhatsApp (blocked - needs Meta account)
+- Phase 2 remaining: Recurring orders, i18n toggle, PWA config
+- Next: Phase 2 remaining items or Phase 3 (Driver App) if user unblocks
 
-### Blockers
-- Supabase project not created — needs user to create project at supabase.com and provide keys
-- Meta WhatsApp Cloud API not set up — needs user to create Meta Business account
+### Blockers (see BLOCKERS.md)
+- Supabase project + API keys
+- Meta WhatsApp Cloud API account
+- AI API keys (Groq/OpenAI)
