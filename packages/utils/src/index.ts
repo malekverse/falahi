@@ -100,6 +100,9 @@ export {
   sanitizeText,
   sanitizePhone,
   sanitizePlate,
+  clampLength,
+  sanitizeWithMaxLength,
+  MAX_LENGTHS,
 } from './sanitize'
 export {
   haversineDistance,
@@ -114,3 +117,5 @@ export type {
   OrderWithLocation,
   ZoneGroup,
 } from './routing'
+export { calculateDiscount } from './discount'
+export type { DiscountResult } from './discount'
