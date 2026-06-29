@@ -58,6 +58,11 @@ LLM_PROVIDER=claude
 NEXT_PUBLIC_APP_URL=https://filahi.tn                  # Production
 # NEXT_PUBLIC_APP_URL=http://localhost:3000             # Development
 
+# ─── Vercel Cron Jobs ─────────────────────────────────────────────────────
+# Generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# Must match the Bearer token sent in cron requests
+CRON_SECRET=your-random-hex-string-here
+
 # ─── Error Monitoring (Sentry) ────────────────────────────────────────────
 # Create project at https://sentry.io → Get DSN from Settings → Client Keys (DSN)
 # Free tier: 5k errors/month, 1 user
