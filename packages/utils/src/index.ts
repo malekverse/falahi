@@ -88,6 +88,7 @@ export { LISTING_EXTRACTION_PROMPT } from './llm-prompts'
 export {
   downloadMetaMedia,
   sendWhatsAppMessage,
+  sendWhatsAppTemplate,
   sendConfirmationButton,
   extractMessage,
 } from './whatsapp'

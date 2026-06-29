@@ -64,6 +64,52 @@ export async function sendWhatsAppMessage(waId: string, text: string) {
   }
 }
 
+interface TemplateParameter {
+  type: 'text'
+  text: string
+}
+
+interface TemplateComponent {
+  type: 'body' | 'header' | 'button'
+  parameters: TemplateParameter[]
+}
+
+export async function sendWhatsAppTemplate(
+  waId: string,
+  templateName: string,
+  languageCode: string = 'ar',
+  components: TemplateComponent[] = [],
+) {
+  const phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID
+  if (!phoneNumberId) {
+    console.error('META_WA_PHONE_NUMBER_ID not set')
+    return
+  }
+
+  const response = await fetchWithRetry(
+    `${API_BASE}/${phoneNumberId}/messages`,
+    {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        to: waId,
+        type: 'template',
+        template: {
+          name: templateName,
+          language: { code: languageCode },
+          components: components.length > 0 ? components : undefined,
+        },
+      }),
+    },
+  )
+
+  if (!response.ok) {
+    const errText = await response.text()
+    throw new Error(`WhatsApp template send failed (${response.status}): ${errText}`)
+  }
+}
+
 export async function sendConfirmationButton(
   waId: string,
   listingId: number,
