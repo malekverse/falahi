@@ -2,6 +2,7 @@ import React from 'react'
 import { formatTND } from '@filahi/types'
 import type { Millimes } from '@filahi/types'
 import { FreshnessBar, FairPriceWidget } from '@filahi/ui'
+import { calculateDiscount } from '@filahi/utils'
 import { useCart } from '@/lib/cart-context'
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -47,6 +48,7 @@ export interface ListingCardItem {
   location_name: string
   harvest_date: string | null
   shelf_life_days: number | null
+  expires_at: string | null
   created_at: string
   image_url?: string | null
   farmer_id?: string
@@ -54,6 +56,9 @@ export interface ListingCardItem {
 
 export const ListingCard = React.memo(function ListingCard({ item }: { item: ListingCardItem }) {
   const { addItem } = useCart()
+  const discount = item.platform_price_millimes
+    ? calculateDiscount(item.platform_price_millimes, item.expires_at)
+    : null
 
   return (
     <div
@@ -77,9 +82,17 @@ export const ListingCard = React.memo(function ListingCard({ item }: { item: Lis
         </div>
 
         {item.platform_price_millimes && (
-          <p className="price-tag mb-3 inline-block text-base" aria-label={`Prix: ${formatTND(item.platform_price_millimes)}`}>
-            {formatTND(item.platform_price_millimes)}
-          </p>
+          <div className="mb-3 flex items-center gap-2">
+            <p className="price-tag inline-block text-base" aria-label={`Prix: ${formatTND(discount ? discount.discountedPriceMillimes : item.platform_price_millimes)}`}>
+              {discount ? formatTND(discount.discountedPriceMillimes) : formatTND(item.platform_price_millimes)}
+            </p>
+            {discount && (
+              <>
+                <span className="rounded bg-red-100 px-1.5 py-0.5 text-xs font-bold text-red-700">{discount.label}</span>
+                <span className="text-xs text-ink-400 line-through">{formatTND(item.platform_price_millimes)}</span>
+              </>
+            )}
+          </div>
         )}
 
         {item.asking_price_millimes && (

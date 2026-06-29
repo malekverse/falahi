@@ -5,6 +5,7 @@ import { transcribeDarija, extractListingFromText, flagForAdminReview } from '@f
 import { createClient } from '@supabase/supabase-js'
 import { BOT_MESSAGES } from '@filahi/utils'
 import type { AIListingExtraction } from '@filahi/types'
+import { checkRateLimit } from '@/lib/rate-limiter'
 
 function getServiceClient() {
   return createClient(
@@ -63,6 +64,11 @@ async function processMessage(rawBody: string) {
     const message = extractMessage(payload)
 
     if (!message) return
+
+    if (!checkRateLimit(message.from, 30, 60_000)) {
+      console.warn(`Rate limit exceeded for ${message.from}`)
+      return
+    }
 
     if (message.msgType === 'audio') {
       await handleAudioMessage(message.from, message.raw, message.msgId)

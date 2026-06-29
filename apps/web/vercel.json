@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/recurring-orders",
+      "schedule": "0 6 * * 1,4"
+    },
+    {
+      "path": "/api/cron/expire-listings",
+      "schedule": "0 */4 * * *"
+    },
+    {
+      "path": "/api/cron/stale-trips",
+      "schedule": "*/15 * * * *"
+    }
+  ]
+}

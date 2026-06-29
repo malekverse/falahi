@@ -1,86 +1,62 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
 
-export const metadata: Metadata = {
-  title: 'Comment ça marche | Filahi',
-}
+const steps = [
+  {
+    number: 1,
+    title: 'Les agriculteurs publient',
+    description: 'Les agriculteurs envoient un message vocal via WhatsApp. Notre IA le traduit et crée une annonce automatiquement.',
+  },
+  {
+    number: 2,
+    title: 'Vous commandez',
+    description: 'Parcourez les produits frais, filtrez par région ou catégorie, et passez commande en quelques clics.',
+  },
+  {
+    number: 3,
+    title: 'Un chauffeur récupère',
+    description: 'Un chauffeur indépendant récupère la marchandise chez l\'agriculteur et la conduit à notre micro-hub.',
+  },
+  {
+    number: 4,
+    title: 'Livraison finale',
+    description: 'Un coursier effectue la dernière étape jusqu\'à votre porte. Vous recevez une notification à chaque étape.',
+  },
+]
 
 export default function HowItWorksPage() {
-  const steps = [
-    {
-      number: '01',
-      title: 'Les agriculteurs listent leurs produits',
-      description: 'Les agriculteurs envoient un message vocal sur WhatsApp en Darija. Notre IA transforme la voix en annonce. Pas besoin d\'application, pas besoin d\'internet — juste WhatsApp.',
-      icon: '🌾',
-    },
-    {
-      number: '02',
-      title: 'Vous commandez sur le marché',
-      description: 'Parcourez les produits frais directement des fermes. Filtrez par catégorie et région. Prix transparents — vous voyez ce que l\'agriculteur reçoit et ce que vous payez.',
-      icon: '🛒',
-    },
-    {
-      number: '03',
-      title: 'Un chauffeur récupère la marchandise',
-      description: 'Un chauffeur indépendant accepte la livraison. Il se rend chez l\'agriculteur, saisit un code OTP pour confirmer le ramassage, et transporte les produits vers le hub.',
-      icon: '🚛',
-    },
-    {
-      number: '04',
-      title: 'Regroupement au hub',
-      description: 'Les produits arrivent à notre micro-hub à Bir El Kassaa. Un coursier local les prend en charge pour la livraison du dernier kilomètre direct chez vous.',
-      icon: '📍',
-    },
-    {
-      number: '05',
-      title: 'Livraison et code OTP',
-      description: 'Le coursier arrive à votre adresse. Vous saisissez le code OTP de livraison pour confirmer la réception. Le paiement est libéré à l\'agriculteur.',
-      icon: '✅',
-    },
-    {
-      number: '06',
-      title: 'Pas de gachara, prix justes',
-      description: 'En supprimant les intermédiaires, l\'agriculteur gagne mieux sa vie et vous payez moins cher. Tout le monde y gagne, sauf les gachara.',
-      icon: '⚖️',
-    },
-  ]
-
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-12 text-center">
-        <p className="font-display text-xs font-medium uppercase tracking-[0.15em] text-gold-500">
-          فلاحي — Guide
-        </p>
-        <h1 className="section-title mt-2 text-3xl sm:text-4xl">Comment ça marche</h1>
-        <p className="mt-2 text-ink-600">
-          De la ferme à votre table, en toute transparence.
-        </p>
-      </div>
+    <main className="mx-auto max-w-3xl px-4 py-12">
+      <h1 className="mb-3 text-center text-3xl font-bold text-olive-800">Comment ça marche ?</h1>
+      <p className="mb-10 text-center text-ink-500">
+        Du champ à votre table, sans intermédiaires.
+      </p>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {steps.map((step) => (
-          <div key={step.number} className="card flex gap-6 p-6">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-olive-100 text-2xl">
-              {step.icon}
-            </div>
+          <div key={step.number} className="flex items-start gap-5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-olive-100 text-lg font-bold text-olive-700">
+              {step.number}
+            </span>
             <div>
-              <span className="font-display text-xs font-bold tracking-widest text-gold-500">{step.number}</span>
-              <h2 className="mt-1 font-display text-lg font-semibold text-ink-900">{step.title}</h2>
-              <p className="mt-1 text-sm leading-relaxed text-ink-600">{step.description}</p>
+              <h2 className="text-lg font-semibold text-ink-900">{step.title}</h2>
+              <p className="mt-1 text-ink-500">{step.description}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="olive-branch-divider">
-        <span>🌿</span>
-      </div>
-
-      <div className="text-center">
-        <Link href="/marketplace" className="btn-primary text-base">
+      <div className="mt-12 rounded-xl bg-cream-50 p-6 text-center">
+        <h3 className="mb-2 text-lg font-semibold text-ink-900">Prêt à commencer ?</h3>
+        <p className="mb-4 text-sm text-ink-500">
+          Des produits frais, des prix justes, livrés chez vous.
+        </p>
+        <Link
+          href="/marketplace"
+          className="inline-block rounded-lg bg-olive-600 px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-olive-700"
+        >
           Voir le marché
         </Link>
       </div>
-    </div>
+    </main>
   )
 }
