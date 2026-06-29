@@ -26,6 +26,7 @@ function ProductImage({ imageUrl, productName, category }: ProductImageProps) {
   if (imageUrl) {
     return (
       <div className="mb-3 h-36 w-full overflow-hidden rounded-lg bg-cream-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={imageUrl} alt={productName} className="h-full w-full object-cover" loading="lazy" />
       </div>
     )

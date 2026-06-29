@@ -5,6 +5,14 @@
 - Access to https://business.facebook.com/wa/manage/phone-numbers/
 - WABA (WhatsApp Business Account) with approved phone number
 
+## Quick Option (if you have a valid Business System User token)
+
+```bash
+set META_WA_ACCESS_TOKEN=<your-token> && node scripts/submit-wa-templates.mjs
+```
+
+This submits all 7 templates via the Graph API in one command. If it fails (auth error, rate limit), fall back to the manual steps below.
+
 ## Steps
 
 ### 1. Log into Meta Business Platform
