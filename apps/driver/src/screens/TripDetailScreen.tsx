@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Linking, Alert, useColorScheme } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Linking, Alert } from 'react-native'
 import { supabase } from '../services/supabase'
 import { startBackgroundTracking, stopBackgroundTracking } from '../services/location'
+import { useTheme } from '../services/theme'
 import * as Haptics from 'expo-haptics'
 
 interface Trip {
@@ -17,9 +18,16 @@ interface Trip {
   last_known_lng: number | null
 }
 
+const STATUS_TRANSITIONS: Record<string, string> = {
+  pending: 'accepted',
+  accepted: 'in_transit',
+  in_transit: 'arrived_hub',
+  arrived_hub: 'delivered',
+}
+
 export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; role: 'long_haul' | 'courier'; onBack: () => void }) {
-  const isDark = useColorScheme() === 'dark'
-  const theme = isDark ? darkStyles : styles
+  const t = useTheme()
+  const s = createStyles(t)
   const [trip, setTrip] = useState<Trip | null>(null)
   const [otpInput, setOtpInput] = useState('')
   const [loading, setLoading] = useState(true)
@@ -35,7 +43,6 @@ export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; rol
       .select('*')
       .eq('id', tripId)
       .single()
-
     setTrip(data)
     setLoading(false)
   }
@@ -47,7 +54,6 @@ export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; rol
       .update({ status: 'accepted' })
       .eq('id', tripId)
       .eq('status', 'pending')
-
     if (error) {
       alert(error.message)
     } else {
@@ -57,11 +63,12 @@ export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; rol
     setActionLoading(false)
   }
 
-  async function handleValidateOTP() {
+  async function handleValidateOTP(type: 'pickup' | 'delivery') {
     if (!otpInput || otpInput.length !== 4) return
     setActionLoading(true)
 
-    const { data, error } = await supabase.rpc('validate_pickup_otp', {
+    const rpcName = type === 'pickup' ? 'validate_pickup_otp' : 'validate_delivery_otp'
+    const { data, error } = await supabase.rpc(rpcName, {
       trip_id: tripId,
       otp_input: otpInput,
     })
@@ -73,48 +80,11 @@ export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; rol
       await Haptics.notificationAsync('error').catch(() => {})
     } else {
       await Haptics.notificationAsync('success').catch(() => {})
-      await startBackgroundTracking(tripId)
-      fetchTrip()
-    }
-
-    setOtpInput('')
-    setActionLoading(false)
-  }
-
-  async function handleArriveHub() {
-    setActionLoading(true)
-
-    const { error } = await supabase
-      .from('trips')
-      .update({ status: 'arrived_hub' })
-      .eq('id', tripId)
-      .eq('status', 'in_transit')
-
-    if (error) {
-      alert(error.message)
-    } else {
-      fetchTrip()
-    }
-    setActionLoading(false)
-  }
-
-  async function handleDeliveryOTP() {
-    if (!otpInput || otpInput.length !== 4) return
-    setActionLoading(true)
-
-    const { data, error } = await supabase.rpc('validate_delivery_otp', {
-      trip_id: tripId,
-      otp_input: otpInput,
-    })
-
-    const result = data as { success: boolean; error?: string } | null
-
-    if (error || !result?.success) {
-      Alert.alert('Erreur', result?.error || 'Code invalide')
-      await Haptics.notificationAsync('error').catch(() => {})
-    } else {
-      await Haptics.notificationAsync('success').catch(() => {})
-      await stopBackgroundTracking()
+      if (type === 'pickup') {
+        await startBackgroundTracking(tripId)
+      } else {
+        await stopBackgroundTracking()
+      }
       fetchTrip()
     }
 
@@ -134,145 +104,108 @@ export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; rol
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={theme.loadingText}>Chargement...</Text>
+      <View style={s.container}>
+        <Text style={s.loadingText}>Chargement...</Text>
       </View>
     )
   }
 
   if (!trip) {
     return (
-      <View style={styles.container}>
-        <Text style={theme.loadingText}>Trajet introuvable</Text>
-        <TouchableOpacity onPress={onBack} style={theme.backBtn}>
-          <Text style={theme.backBtnText}>Retour</Text>
+      <View style={s.container}>
+        <Text style={s.loadingText}>Trajet introuvable</Text>
+        <TouchableOpacity onPress={onBack} style={s.backBtn}>
+          <Text style={s.backBtnText}>← Retour</Text>
         </TouchableOpacity>
       </View>
     )
   }
 
   return (
-    <View style={theme.container}>
-      <TouchableOpacity onPress={onBack} style={theme.backBtn}>
-        <Text style={theme.backBtnText}>← Retour</Text>
+    <View style={s.container}>
+      <TouchableOpacity onPress={onBack} style={s.backBtn}>
+        <Text style={s.backBtnText}>← Retour</Text>
       </TouchableOpacity>
 
-      <Text style={theme.title}>{trip.origin_location_name}</Text>
+      <Text style={s.locationText}>{trip.origin_location_name}</Text>
       {trip.destination_location_name && role === 'courier' && (
-        <Text style={theme.destination}>→ {trip.destination_location_name}</Text>
+        <Text style={s.destinationText}>→ {trip.destination_location_name}</Text>
       )}
-      <Text style={theme.status}>Statut: {trip.status}</Text>
-
-      <View style={theme.detailRow}>
-        <Text style={theme.label}>Valeur:</Text>
-        <Text style={theme.value}>{(trip.cargo_value_millimes / 1000).toFixed(0)} TND</Text>
-      </View>
-      <View style={theme.detailRow}>
-        <Text style={theme.label}>Gain:</Text>
-        <Text style={theme.value}>{(trip.driver_fee_millimes / 1000).toFixed(3)} TND</Text>
+      <View style={[s.statusBadge, { backgroundColor: t.accentLight }]}>
+        <Text style={[s.statusText, { color: t.accent }]}>{trip.status}</Text>
       </View>
 
-      {/* Navigation button */}
+      <View style={s.card}>
+        <View style={s.detailRow}>
+          <Text style={s.detailLabel}>Valeur</Text>
+          <Text style={s.detailValue}>{(trip.cargo_value_millimes / 1000).toFixed(0)} TND</Text>
+        </View>
+        <View style={[s.detailRow, { borderBottomWidth: 0 }]}>
+          <Text style={s.detailLabel}>Gain</Text>
+          <Text style={s.gainValue}>+{(trip.driver_fee_millimes / 1000).toFixed(3)} TND</Text>
+        </View>
+      </View>
+
       {['in_transit', 'arrived_hub'].includes(trip.status) && (
-        <TouchableOpacity style={theme.navBtn} onPress={openNavigation}>
-          <Text style={theme.navBtnText}>Ouvrir dans Google Maps</Text>
+        <TouchableOpacity style={s.navBtn} onPress={openNavigation}>
+          <Text style={s.navBtnText}>Ouvrir dans Google Maps</Text>
         </TouchableOpacity>
       )}
 
-      {/* Accept trip */}
       {trip.status === 'pending' && (
-        <TouchableOpacity
-          style={theme.actionBtn}
-          onPress={handleAcceptTrip}
-          disabled={actionLoading}
-        >
-          <Text style={theme.actionBtnText}>
-            {actionLoading ? '...' : 'Accepter le trajet'}
-          </Text>
+        <TouchableOpacity style={s.actionBtn} onPress={handleAcceptTrip} disabled={actionLoading}>
+          <Text style={s.actionBtnText}>{actionLoading ? '...' : 'Accepter le trajet'}</Text>
         </TouchableOpacity>
       )}
 
-      {/* OTP Input for pickup */}
       {trip.status === 'accepted' && (
-        <View style={theme.otpSection}>
-          <Text style={theme.otpLabel}>Code de ramassage</Text>
+        <View style={s.otpSection}>
+          <Text style={s.otpLabel}>Code de ramassage</Text>
           <TextInput
-            style={theme.otpInput}
+            style={s.otpInput}
             value={otpInput}
             onChangeText={setOtpInput}
             placeholder="0000"
-            keyboardType="numeric"
+            placeholderTextColor={t.textMuted}
+            keyboardType="number-pad"
             maxLength={4}
           />
           <TouchableOpacity
-            style={theme.actionBtn}
-            onPress={handleValidateOTP}
+            style={s.actionBtn}
+            onPress={() => handleValidateOTP('pickup')}
             disabled={actionLoading || otpInput.length !== 4}
           >
-            <Text style={theme.actionBtnText}>
-              {actionLoading ? '...' : 'Confirmer le ramassage'}
-            </Text>
+            <Text style={s.actionBtnText}>{actionLoading ? '...' : 'Confirmer le ramassage'}</Text>
           </TouchableOpacity>
         </View>
       )}
 
-      {/* Arrive at hub — long-haul only */}
       {role === 'long_haul' && trip.status === 'in_transit' && (
-        <TouchableOpacity
-          style={theme.actionBtn}
-          onPress={handleArriveHub}
-          disabled={actionLoading}
-        >
-          <Text style={theme.actionBtnText}>
-            {actionLoading ? '...' : 'Arrivé au hub'}
-          </Text>
+        <TouchableOpacity style={s.actionBtn} onPress={async () => {
+          setActionLoading(true); const { error } = await supabase.from('trips').update({ status: 'arrived_hub' }).eq('id', tripId).eq('status', 'in_transit'); if (!error) fetchTrip(); setActionLoading(false)
+        }} disabled={actionLoading}>
+          <Text style={s.actionBtnText}>{actionLoading ? '...' : 'Arrivé au hub'}</Text>
         </TouchableOpacity>
       )}
 
-      {/* Courier: skip hub, go direct from in_transit to delivery OTP */}
-      {role === 'courier' && trip.status === 'in_transit' && (
-        <View style={theme.otpSection}>
-          <Text style={theme.otpLabel}>Code de livraison (chez l'acheteur)</Text>
+      {((role === 'courier' && trip.status === 'in_transit') || (role === 'long_haul' && trip.status === 'arrived_hub')) && (
+        <View style={s.otpSection}>
+          <Text style={s.otpLabel}>Code de livraison</Text>
           <TextInput
-            style={theme.otpInput}
+            style={s.otpInput}
             value={otpInput}
             onChangeText={setOtpInput}
             placeholder="0000"
-            keyboardType="numeric"
+            placeholderTextColor={t.textMuted}
+            keyboardType="number-pad"
             maxLength={4}
           />
           <TouchableOpacity
-            style={theme.actionBtn}
-            onPress={handleDeliveryOTP}
+            style={s.actionBtn}
+            onPress={() => handleValidateOTP('delivery')}
             disabled={actionLoading || otpInput.length !== 4}
           >
-            <Text style={theme.actionBtnText}>
-              {actionLoading ? '...' : 'Confirmer la livraison'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* OTP Input for delivery — long-haul */}
-      {role === 'long_haul' && trip.status === 'arrived_hub' && (
-        <View style={theme.otpSection}>
-          <Text style={theme.otpLabel}>Code de livraison</Text>
-          <TextInput
-            style={theme.otpInput}
-            value={otpInput}
-            onChangeText={setOtpInput}
-            placeholder="0000"
-            keyboardType="numeric"
-            maxLength={4}
-          />
-          <TouchableOpacity
-            style={theme.actionBtn}
-            onPress={handleDeliveryOTP}
-            disabled={actionLoading || otpInput.length !== 4}
-          >
-            <Text style={theme.actionBtnText}>
-              {actionLoading ? '...' : 'Confirmer la livraison'}
-            </Text>
+            <Text style={s.actionBtnText}>{actionLoading ? '...' : 'Confirmer la livraison'}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -280,61 +213,62 @@ export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; rol
   )
 }
 
-const baseStyles = {
-  backBtn: { marginBottom: 12 } as const,
-  backBtnText: { color: '#16a34a', fontSize: 16 } as const,
-  loadingText: { textAlign: 'center' as const, marginTop: 40 },
-  destination: { fontSize: 16, marginBottom: 4 } as const,
-  title: { fontSize: 24, fontWeight: '700' as const, marginBottom: 4 },
-  status: { fontSize: 14, marginBottom: 20 },
-  detailRow: { flexDirection: 'row' as const, justifyContent: 'space-between' as const, marginBottom: 8 },
-  label: { fontSize: 16 },
-  value: { fontSize: 16, fontWeight: '600' as const },
-  navBtn: {
-    borderRadius: 8,
-    padding: 14,
-    alignItems: 'center' as const,
-    marginVertical: 16,
-  },
-  navBtnText: { color: '#fff', fontSize: 15, fontWeight: '600' as const },
-  actionBtn: {
-    backgroundColor: '#16a34a',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center' as const,
-    marginTop: 16,
-  },
-  actionBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' as const },
-  otpSection: { marginTop: 20 },
-  otpLabel: { fontSize: 16, fontWeight: '500' as const, marginBottom: 8 },
-  otpInput: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 16,
-    fontSize: 24,
-    textAlign: 'center' as const,
-    letterSpacing: 8,
-  },
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb', padding: 16 },
-  ...baseStyles,
-  loadingText: { ...baseStyles.loadingText, color: '#9ca3af' },
-  destination: { ...baseStyles.destination, color: '#374151' },
-  status: { ...baseStyles.status, color: '#6b7280' },
-  label: { ...baseStyles.label, color: '#374151' },
-  navBtn: { ...baseStyles.navBtn, backgroundColor: '#1f2937' },
-  otpInput: { ...baseStyles.otpInput, borderColor: '#d1d5db', backgroundColor: '#fff' },
-})
-
-const darkStyles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#111827', padding: 16 },
-  ...baseStyles,
-  loadingText: { ...baseStyles.loadingText, color: '#6b7280' },
-  destination: { ...baseStyles.destination, color: '#d1d5db' },
-  status: { ...baseStyles.status, color: '#9ca3af' },
-  label: { ...baseStyles.label, color: '#d1d5db' },
-  navBtn: { ...baseStyles.navBtn, backgroundColor: '#374151' },
-  otpInput: { ...baseStyles.otpInput, borderColor: '#4b5563', backgroundColor: '#1f2937', color: '#f9fafb' },
-})
+const createStyles = (t: ReturnType<typeof useTheme>) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: t.background, padding: 16 },
+    backBtn: { marginBottom: 16, alignSelf: 'flex-start' },
+    backBtnText: { color: t.accent, fontSize: 15, fontWeight: '600' },
+    loadingText: { textAlign: 'center', color: t.textMuted, marginTop: 40, fontSize: 15 },
+    locationText: { fontSize: 24, fontWeight: '700', color: t.text, marginBottom: 4 },
+    destinationText: { fontSize: 16, color: t.textSecondary, marginBottom: 8 },
+    statusBadge: { alignSelf: 'flex-start', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4, marginBottom: 20 },
+    statusText: { fontSize: 12, fontWeight: '600' },
+    card: {
+      backgroundColor: t.card,
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: t.border,
+      marginBottom: 16,
+    },
+    detailRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: t.border,
+    },
+    detailLabel: { fontSize: 15, color: t.textSecondary },
+    detailValue: { fontSize: 15, fontWeight: '600', color: t.text },
+    gainValue: { fontSize: 15, fontWeight: '700', color: t.accent },
+    navBtn: {
+      backgroundColor: t.accent,
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    navBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+    actionBtn: {
+      backgroundColor: t.accent,
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+      marginTop: 12,
+    },
+    actionBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+    otpSection: { marginTop: 12 },
+    otpLabel: { fontSize: 15, fontWeight: '600', color: t.text, marginBottom: 8 },
+    otpInput: {
+      borderWidth: 1,
+      borderColor: t.border,
+      borderRadius: 12,
+      padding: 16,
+      fontSize: 28,
+      textAlign: 'center',
+      letterSpacing: 10,
+      backgroundColor: t.card,
+      color: t.text,
+      marginBottom: 4,
+    },
+  })

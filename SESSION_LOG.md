@@ -142,17 +142,19 @@
   - `orders/recurring (POST)` — body validated via `CreateRecurringOrderSchema`
   - `orders/recurring (DELETE)` — body validated via `CancelRecurringOrderSchema`
   - `marketplace (GET)` — query params validated via `MarketplaceQuerySchema`
-- **Total routes with zod validation:** ~17/21 (up from ~8/21)
+- **`trips/validate-otp`** — body validated via `ValidateTripOTPSchema`
+- **Total routes with zod validation:** ~18/21 (up from ~8/21)
+- **Remaining without zod:** `webhooks/whatsapp` (raw body used for HMAC, validated by `extractMessage`), `cron/recurring-orders` (auth header only), `auth/logout` (no body)
 
 ### Current State
 | Metric | Value |
 |---|---|
 | **TypeScript errors** | **0** across all 7 packages |
-| **Git commits (master)** | **17** total (1 this session) |
-| **Zod coverage** | ~17/21 API routes (marketplace, auth\*/\*, sub-trips\*/\*, group-buys\*, orders\*/\*, disputes, ratings, admin\*/\*) |
+| **Git commits (master)** | **18** total (2 this session) |
+| **Zod coverage** | ~18/21 API routes (marketplace, auth\*/\*, sub-trips\*/\*, group-buys\*, orders\*/\*, disputes, ratings, admin\*/\*, trips) |
 
 ### Files Changed
-- `apps/web/src/lib/validation.ts` — added 8 new schemas
+- `apps/web/src/lib/validation.ts` — added 9 new schemas
 - `apps/web/src/app/api/auth/send-whatsapp-otp/route.ts` — zod parse
 - `apps/web/src/app/api/auth/verify-whatsapp-otp/route.ts` — zod parse
 - `apps/web/src/app/api/group-buys/join/route.ts` — zod parse (was manual)
@@ -161,3 +163,8 @@
 - `apps/web/src/app/api/sub-trips/validate-otp/route.ts` — zod parse
 - `apps/web/src/app/api/orders/recurring/route.ts` — zod parse (POST + DELETE)
 - `apps/web/src/app/api/marketplace/route.ts` — zod query param validation
+- `apps/web/src/app/api/trips/validate-otp/route.ts` — zod parse
+
+### Next Item
+- Continue build loop: run typecheck → lint → next Enhancement Mode item.
+- Candidate: driver app skeleton loading states (replaces "Chargement..." text with actual skeletons).

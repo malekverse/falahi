@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text, FlatList, StyleSheet, RefreshControl, useColorScheme } from 'react-native'
+import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native'
 import { supabase } from '../services/supabase'
 import { TripCard } from '../components/TripCard'
-import { lightTheme, darkTheme } from '../services/theme'
+import { useTheme } from '../services/theme'
 
 interface Trip {
   id: string
@@ -17,8 +17,8 @@ export function HomeScreen({ onTripPress }: { onTripPress: (tripId: string) => v
   const [refreshing, setRefreshing] = useState(false)
   const [loading, setLoading] = useState(true)
   const [driverRole, setDriverRole] = useState<string | null>(null)
-  const isDark = useColorScheme() === 'dark'
-  const t = isDark ? darkTheme : lightTheme
+  const t = useTheme()
+  const s = createStyles(t)
 
   const fetchTrips = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -60,11 +60,17 @@ export function HomeScreen({ onTripPress }: { onTripPress: (tripId: string) => v
     setRefreshing(false)
   }
 
-  const styles = createStyles(t)
+  const activeTrips = trips.filter((t) => ['accepted', 'in_transit', 'arrived_hub'].includes(t.status))
+  const pendingTrips = trips.filter((t) => t.status === 'pending')
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Mes trajets</Text>
+    <View style={s.container}>
+      <View style={s.headerSection}>
+        <Text style={s.eyebrow}>فلاحي — Chauffeur</Text>
+        <Text style={s.title}>
+          {driverRole === 'courier' ? 'Courses disponibles' : 'Trajets longue distance'}
+        </Text>
+      </View>
 
       <FlatList
         data={trips}
@@ -80,22 +86,52 @@ export function HomeScreen({ onTripPress }: { onTripPress: (tripId: string) => v
           />
         )}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={t.textSecondary} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={t.accent} colors={[t.accent]} />
         }
-        contentContainerStyle={trips.length === 0 ? styles.emptyContainer : styles.list}
+        contentContainerStyle={trips.length === 0 ? s.emptyContainer : s.list}
+        ListHeaderComponent={
+          <>
+            {activeTrips.length > 0 && (
+              <View style={s.sectionHeader}>
+                <View style={[s.sectionDot, { backgroundColor: t.accent }]} />
+                <Text style={s.sectionTitle}>En cours ({activeTrips.length})</Text>
+              </View>
+            )}
+            {pendingTrips.length > 0 && (
+              <View style={s.sectionHeader}>
+                <View style={[s.sectionDot, { backgroundColor: t.gold }]} />
+                <Text style={s.sectionTitle}>Disponibles ({pendingTrips.length})</Text>
+              </View>
+            )}
+          </>
+        }
         ListEmptyComponent={
-          !loading ? <Text style={styles.emptyText}>Aucun trajet disponible</Text> : null
+          !loading ? (
+            <View style={s.emptyContent}>
+              <Text style={s.emptyIcon}>🛻</Text>
+              <Text style={s.emptyText}>Aucun trajet disponible</Text>
+              <Text style={s.emptySubtext}>Tirez vers le bas pour actualiser</Text>
+            </View>
+          ) : null
         }
       />
     </View>
   )
 }
 
-const createStyles = (t: typeof lightTheme) =>
+const createStyles = (t: ReturnType<typeof useTheme>) =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: t.background },
-    title: { fontSize: 22, fontWeight: '700', padding: 16, paddingBottom: 8, color: t.text },
+    headerSection: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
+    eyebrow: { fontSize: 11, fontWeight: '600', letterSpacing: 2, color: t.gold, marginBottom: 4 },
+    title: { fontSize: 22, fontWeight: '700', color: t.text },
     list: { padding: 16 },
     emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    emptyText: { color: t.textSecondary, fontSize: 16 },
+    emptyContent: { alignItems: 'center', paddingTop: 60 },
+    emptyIcon: { fontSize: 48, marginBottom: 16 },
+    emptyText: { color: t.textSecondary, fontSize: 16, fontWeight: '600' },
+    emptySubtext: { color: t.textMuted, fontSize: 13, marginTop: 4 },
+    sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, marginTop: 4 },
+    sectionDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
+    sectionTitle: { fontSize: 14, fontWeight: '600', color: t.textSecondary },
   })
