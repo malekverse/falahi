@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { ListingCard, type ListingCardItem } from './ListingCard'
+import { SkeletonCard } from './SkeletonCard'
 
 export function LoadMore({
   initialItems,
@@ -51,18 +52,23 @@ export function LoadMore({
         ))}
       </div>
 
-      {hasMore && (
+      {loading ? (
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonCard key={`skel-${i}`} />
+          ))}
+        </div>
+      ) : hasMore ? (
         <div className="mt-8 text-center">
           <button
             onClick={handleLoadMore}
-            disabled={loading}
-            className="btn-ghost rounded-lg border border-olive-600 px-8 py-3 text-sm font-medium text-olive-700 transition-colors hover:bg-olive-50 disabled:opacity-50"
+            className="btn-ghost rounded-lg border border-olive-600 px-8 py-3 text-sm font-medium text-olive-700 transition-colors hover:bg-olive-50"
             aria-label="Charger plus de produits"
           >
-            {loading ? 'Chargement...' : 'Voir plus'}
+            Voir plus
           </button>
         </div>
-      )}
+      ) : null}
 
       {!hasMore && items.length === 0 && (
         <p className="py-12 text-center text-sm text-ink-500">
