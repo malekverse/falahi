@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 
 const rateLimit = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_WINDOW_MS = 60_000
@@ -11,33 +11,42 @@ const RATE_LIMITS: Record<string, number> = {
   '/api/admin/send-whatsapp': 20,
 }
 
-export async function middleware(req: NextRequest) {
-  const pathname = req.nextUrl.pathname
-
-  // Admin route auth guard
-  if (pathname.startsWith('/admin')) {
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return req.cookies.getAll()
-          },
-          setAll() {
-            // cookies are set via response on login, not in middleware
-          },
+function createSupabaseWithCookies(req: NextRequest, res: NextResponse) {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll()
+        },
+        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+          for (const { name, value, options } of cookiesToSet) {
+            res.cookies.set(name, value, options)
+          }
         },
       },
-    )
+    },
+  )
+}
 
+export async function middleware(req: NextRequest) {
+  const pathname = req.nextUrl.pathname
+  const res = NextResponse.next()
+
+  if (pathname.startsWith('/admin')) {
+    const supabase = createSupabaseWithCookies(req, res)
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
       const url = req.nextUrl.clone()
       url.pathname = '/login'
       url.searchParams.set('redirect', pathname)
-      return NextResponse.redirect(url)
+      const redirectRes = NextResponse.redirect(url)
+      for (const c of res.cookies.getAll()) {
+        redirectRes.cookies.set(c.name, c.value)
+      }
+      return redirectRes
     }
 
     const { data: profile } = await supabase
@@ -47,23 +56,23 @@ export async function middleware(req: NextRequest) {
       .single()
 
     if (profile?.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      const forbiddenRes = NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      for (const c of res.cookies.getAll()) {
+        forbiddenRes.cookies.set(c.name, c.value)
+      }
+      return forbiddenRes
     }
   }
 
-  // Rate limiting for API routes
-  const maxRequests = RATE_LIMITS[pathname]
-  if (maxRequests) {
+  if (RATE_LIMITS[pathname]) {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
       || req.headers.get('x-real-ip')
       || 'unknown'
-
     const now = Date.now()
     const entry = rateLimit.get(ip)
-
     if (entry && now < entry.resetAt) {
       entry.count++
-      if (entry.count > maxRequests) {
+      if (entry.count > RATE_LIMITS[pathname]) {
         return NextResponse.json(
           { error: 'Too many requests' },
           { status: 429, headers: { 'Retry-After': '60' } },
@@ -74,7 +83,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  return NextResponse.next()
+  return res
 }
 
 export const config = {

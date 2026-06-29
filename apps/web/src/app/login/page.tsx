@@ -100,13 +100,31 @@ export default function LoginPage() {
 
   async function loginWithEmail(email: string, password: string) {
     setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    setLoading(false)
 
-    if (error) {
-      alert(error.message)
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error || !data.session) {
+      setLoading(false)
+      alert(error?.message ?? 'Login failed')
       return
     }
+
+    const res = await fetch('/api/auth/callback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      }),
+    })
+
+    setLoading(false)
+
+    if (!res.ok) {
+      const err = await res.json()
+      alert(err.error || 'Failed to establish session')
+      return
+    }
+
     window.location.href = '/marketplace'
   }
 
