@@ -6,11 +6,11 @@
     },
     {
       "path": "/api/cron/expire-listings",
-      "schedule": "0 */4 * * *"
+      "schedule": "0 2 * * *"
     },
     {
       "path": "/api/cron/stale-trips",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 3 * * *"
     }
   ]
 }
