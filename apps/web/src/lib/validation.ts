@@ -69,6 +69,12 @@ export const CancelRecurringOrderSchema = z.object({
   orderId: z.string().uuid(),
 })
 
+export const ValidateTripOTPSchema = z.object({
+  tripId: z.string().uuid(),
+  otp: z.string().min(4).max(6),
+  type: z.enum(['pickup', 'delivery']),
+})
+
 export const MarketplaceQuerySchema = z.object({
   cursor: z.string().optional(),
   category: z.string().max(50).optional(),
@@ -87,4 +93,5 @@ export type AcceptSubTripInput = z.infer<typeof AcceptSubTripSchema>
 export type ValidateSubTripOTPInput = z.infer<typeof ValidateSubTripOTPSchema>
 export type CreateRecurringOrderInput = z.infer<typeof CreateRecurringOrderSchema>
 export type CancelRecurringOrderInput = z.infer<typeof CancelRecurringOrderSchema>
+export type ValidateTripOTPInput = z.infer<typeof ValidateTripOTPSchema>
 export type MarketplaceQuery = z.infer<typeof MarketplaceQuerySchema>

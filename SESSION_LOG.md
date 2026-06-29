@@ -127,3 +127,37 @@
 - `apps/web/src/components/marketplace/ListingCard.tsx` — a11y + contrast fix
 - `apps/web/src/app/marketplace/page.tsx` — pagination rewrite
 - `BLOCKERS.md` — updated
+
+## Session 4 — 2026-06-28 (Enhancement — Zod Validation on API Routes)
+
+### Completed This Session
+- **Zod validation schemas added** for 9 previously-unvalidated API routes:
+  - `validation.ts` — `SendWhatsAppOTPSchema`, `VerifyWhatsAppOTPSchema`, `CreateSubTripSchema`, `AcceptSubTripSchema`, `ValidateSubTripOTPSchema`, `CreateRecurringOrderSchema`, `CancelRecurringOrderSchema`, `MarketplaceQuerySchema`
+  - `auth/send-whatsapp-otp` — body validated via `SendWhatsAppOTPSchema`
+  - `auth/verify-whatsapp-otp` — body validated via `VerifyWhatsAppOTPSchema`
+  - `group-buys/join` — body validated via existing `JoinGroupBuySchema` (was using manual check)
+  - `sub-trips/create` — body validated via `CreateSubTripSchema`
+  - `sub-trips/accept` — body validated via `AcceptSubTripSchema`
+  - `sub-trips/validate-otp` — body validated via `ValidateSubTripOTPSchema`
+  - `orders/recurring (POST)` — body validated via `CreateRecurringOrderSchema`
+  - `orders/recurring (DELETE)` — body validated via `CancelRecurringOrderSchema`
+  - `marketplace (GET)` — query params validated via `MarketplaceQuerySchema`
+- **Total routes with zod validation:** ~17/21 (up from ~8/21)
+
+### Current State
+| Metric | Value |
+|---|---|
+| **TypeScript errors** | **0** across all 7 packages |
+| **Git commits (master)** | **17** total (1 this session) |
+| **Zod coverage** | ~17/21 API routes (marketplace, auth\*/\*, sub-trips\*/\*, group-buys\*, orders\*/\*, disputes, ratings, admin\*/\*) |
+
+### Files Changed
+- `apps/web/src/lib/validation.ts` — added 8 new schemas
+- `apps/web/src/app/api/auth/send-whatsapp-otp/route.ts` — zod parse
+- `apps/web/src/app/api/auth/verify-whatsapp-otp/route.ts` — zod parse
+- `apps/web/src/app/api/group-buys/join/route.ts` — zod parse (was manual)
+- `apps/web/src/app/api/sub-trips/create/route.ts` — zod parse
+- `apps/web/src/app/api/sub-trips/accept/route.ts` — zod parse
+- `apps/web/src/app/api/sub-trips/validate-otp/route.ts` — zod parse
+- `apps/web/src/app/api/orders/recurring/route.ts` — zod parse (POST + DELETE)
+- `apps/web/src/app/api/marketplace/route.ts` — zod query param validation

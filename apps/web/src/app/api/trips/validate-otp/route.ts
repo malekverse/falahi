@@ -1,22 +1,15 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { ValidateTripOTPSchema } from '@/lib/validation'
 
 export async function POST(request: NextRequest) {
   try {
-    const { tripId, otp, type } = await request.json()
-
-    if (!tripId || !otp || !type) {
-      return NextResponse.json(
-        { error: 'Missing required fields: tripId, otp, type' },
-        { status: 400 },
-      )
+    const raw = await request.json()
+    const parsed = ValidateTripOTPSchema.safeParse(raw)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid request', details: parsed.error.flatten() }, { status: 400 })
     }
 
-    if (type !== 'pickup' && type !== 'delivery') {
-      return NextResponse.json(
-        { error: 'type must be "pickup" or "delivery"' },
-        { status: 400 },
-      )
-    }
+    const { tripId, otp, type } = parsed.data
 
     // TODO: Call Supabase RPC for atomic OTP validation
     // const result = await supabase.rpc('validate_pickup_otp', { ... })
