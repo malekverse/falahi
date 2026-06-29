@@ -33,3 +33,4 @@ BEGIN
   ORDER BY t.last_ping_at;
 END;
 $$;
+
