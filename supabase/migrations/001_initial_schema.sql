@@ -4,6 +4,28 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Helper functions to avoid RLS recursion in admin/courier checks
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN
+LANGUAGE sql STABLE SECURITY DEFINER
+AS $$
+  SELECT EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin');
+$$;
+
+CREATE OR REPLACE FUNCTION public.has_driver_role(required_role TEXT)
+RETURNS BOOLEAN
+LANGUAGE sql STABLE SECURITY DEFINER
+AS $$
+  SELECT EXISTS (SELECT 1 FROM public.driver_profiles WHERE id = auth.uid() AND role = required_role);
+$$;
+
+CREATE OR REPLACE FUNCTION public.has_role(required_role TEXT)
+RETURNS BOOLEAN
+LANGUAGE sql STABLE SECURITY DEFINER
+AS $$
+  SELECT EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = required_role);
+$$;
+
 CREATE TABLE IF NOT EXISTS profiles (
   id              UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name       TEXT NOT NULL,
@@ -30,7 +52,7 @@ CREATE POLICY "Users update own profile"
 DROP POLICY IF EXISTS "Admin reads all profiles" ON profiles;
 CREATE POLICY "Admin reads all profiles"
   ON profiles FOR SELECT USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    public.is_admin()
   );
 
 CREATE TABLE IF NOT EXISTS driver_profiles (
@@ -58,7 +80,7 @@ CREATE POLICY "Driver reads own profile"
 DROP POLICY IF EXISTS "Admin manages driver profiles" ON driver_profiles;
 CREATE POLICY "Admin manages driver profiles"
   ON driver_profiles FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    public.is_admin()
   );
 
 CREATE TABLE IF NOT EXISTS hubs (
@@ -139,7 +161,7 @@ CREATE POLICY "Farmers manage own inventory"
 DROP POLICY IF EXISTS "Admin manages all inventory" ON inventory_items;
 CREATE POLICY "Admin manages all inventory"
   ON inventory_items FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    public.is_admin()
   );
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -169,7 +191,7 @@ CREATE POLICY "Buyers read own orders"
 DROP POLICY IF EXISTS "Admin reads all orders" ON orders;
 CREATE POLICY "Admin reads all orders"
   ON orders FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    public.is_admin()
   );
 
 CREATE TABLE IF NOT EXISTS order_items (
@@ -287,7 +309,7 @@ CREATE POLICY "Drivers read own trips"
 DROP POLICY IF EXISTS "Admin manages all trips" ON trips;
 CREATE POLICY "Admin manages all trips"
   ON trips FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    public.is_admin()
   );
 
 CREATE TABLE IF NOT EXISTS trip_location_cache (
@@ -349,7 +371,7 @@ ALTER TABLE disputes ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Admin manages disputes" ON disputes;
 CREATE POLICY "Admin manages disputes"
   ON disputes FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    public.is_admin()
   );
 
 CREATE TABLE IF NOT EXISTS ledger_entries (
@@ -374,7 +396,7 @@ ALTER TABLE ledger_entries ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Admin reads ledger" ON ledger_entries;
 CREATE POLICY "Admin reads ledger"
   ON ledger_entries FOR SELECT USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    public.is_admin()
   );
 
 DROP POLICY IF EXISTS "Ledger is append-only via server" ON ledger_entries;

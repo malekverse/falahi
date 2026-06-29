@@ -36,22 +36,19 @@ ALTER TABLE group_buy_participants ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can read open group buys" ON group_buys;
 CREATE POLICY "Anyone can read open group buys"
   ON group_buys FOR SELECT USING (
-    status = 'open' OR
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin') OR
-    creator_id = auth.uid()
+    status = 'open' OR auth.is_admin() OR creator_id = auth.uid()
   );
 
 DROP POLICY IF EXISTS "Authenticated users can create group buys" ON group_buys;
 CREATE POLICY "Authenticated users can create group buys"
   ON group_buys FOR INSERT WITH CHECK (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'buyer')
+    auth.has_role('buyer')
   );
 
 DROP POLICY IF EXISTS "Creator or admin can update group buys" ON group_buys;
 CREATE POLICY "Creator or admin can update group buys"
   ON group_buys FOR UPDATE USING (
-    creator_id = auth.uid() OR
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    creator_id = auth.uid() OR auth.is_admin()
   );
 
 DROP POLICY IF EXISTS "Buyers read own participations" ON group_buy_participants;

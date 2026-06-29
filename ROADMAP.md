@@ -11,14 +11,13 @@
 **Goal:** Zero to working dev environment, no UI yet.
 
 - [x] Monorepo initialized (pnpm workspaces + Turborepo)
-- [ ] Supabase project created, PostGIS enabled
-- [ ] All tables from DATA_MODELS.md migrated and verified
-- [ ] TypeScript types auto-generated
-- [ ] RLS tested: anonymous request returns 0 rows on every table
-- [ ] Supabase Auth configured (phone OTP for buyers/drivers)
-- [ ] Meta WhatsApp Cloud API account setup
-- [x] Webhook verification working (GET handler)
-- [ ] `.env.local` configured (no secrets committed to git)
+- [x] Supabase project created, PostGIS enabled
+- [x] All tables from DATA_MODELS.md migrated and verified
+- [x] TypeScript types auto-generated
+- [x] RLS tested: anonymous request returns 0 rows on every table
+- [x] Supabase Auth configured (phone OTP for buyers/drivers)
+- [x] Meta WhatsApp Cloud API account setup
+- [x] `.env.local` configured (no secrets committed to git)
 - [x] `pnpm typecheck` passes with 0 errors
 
 **Definition of Done:** A Postman request to `/api/webhooks/whatsapp` returns 200.

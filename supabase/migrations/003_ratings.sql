@@ -28,7 +28,7 @@ CREATE POLICY "Buyers create ratings"
 DROP POLICY IF EXISTS "Admin manages ratings" ON ratings;
 CREATE POLICY "Admin manages ratings"
   ON ratings FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    auth.is_admin()
   );
 
 CREATE OR REPLACE FUNCTION update_driver_trust_score()

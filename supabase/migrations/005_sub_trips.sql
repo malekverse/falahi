@@ -32,20 +32,19 @@ ALTER TABLE sub_trips ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Couriers read available sub_trips" ON sub_trips;
 CREATE POLICY "Couriers read available sub_trips"
   ON sub_trips FOR SELECT USING (
-    EXISTS (SELECT 1 FROM driver_profiles WHERE id = auth.uid() AND role = 'courier')
-    OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    auth.has_driver_role('courier') OR auth.is_admin()
   );
 
 DROP POLICY IF EXISTS "Couriers accept sub_trips" ON sub_trips;
 CREATE POLICY "Couriers accept sub_trips"
   ON sub_trips FOR UPDATE USING (
-    EXISTS (SELECT 1 FROM driver_profiles WHERE id = auth.uid() AND role = 'courier')
+    auth.has_driver_role('courier')
   );
 
 DROP POLICY IF EXISTS "Admin manages sub_trips" ON sub_trips;
 CREATE POLICY "Admin manages sub_trips"
   ON sub_trips FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    auth.is_admin()
   );
 
 CREATE OR REPLACE FUNCTION create_sub_trips_for_hub_arrival(parent_trip_id UUID)
