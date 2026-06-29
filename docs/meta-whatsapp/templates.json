@@ -1,0 +1,81 @@
+{
+  "templates": [
+    {
+      "name": "listing_confirmation",
+      "category": "TRANSACTIONAL",
+      "language": "ar",
+      "body": "تمام يا عمي! فهمت:\n📦 المنتج: {{1}}\n🔢 الكمية: {{2}} {{3}}\n📍 المنطقة: {{4}}\n💰 السعر: {{5}} دينار\n\nهل تأكد؟",
+      "example": {
+        "body": [
+          ["200 حارة بيض بلدي", "200", "حارة", "المطر", "15"]
+        ]
+      }
+    },
+    {
+      "name": "welcome",
+      "category": "TRANSACTIONAL",
+      "language": "ar",
+      "body": "أهلاً وسهلاً! أنا بوت فلاحي. نقدر نعاونك تبيع محصولك مباشرة بسعر أحسن.\n\nإرسلي رسالة صوتية أو كتابية فيها:\n- شنو عندك للبيع\n- الكمية\n- وين أنت (المنطقة)\n\nمثال: عندي 200 حارة بيض بلدي في المطر",
+      "example": {
+        "body": [
+          []
+        ]
+      }
+    },
+    {
+      "name": "clarification_needed",
+      "category": "TRANSACTIONAL",
+      "language": "ar",
+      "body": "ما فهمتكش مليح. ممكن تعيد وترسلي رسالة صوتية واضحة أكثر؟ أو اكتب لي:\n- شنو تحب تبيع\n- الكمية\n- المنطقة متاعك",
+      "example": {
+        "body": [
+          []
+        ]
+      }
+    },
+    {
+      "name": "listing_live",
+      "category": "TRANSACTIONAL",
+      "language": "ar",
+      "body": "ممتاز! حطينا عرضك على الموقع. المشترين يشوفوه دروا. باش تعرف حال الفلوس، ابعثلي فلوسي في أي وقت.",
+      "example": {
+        "body": [
+          []
+        ]
+      }
+    },
+    {
+      "name": "pickup_otp",
+      "category": "TRANSACTIONAL",
+      "language": "ar",
+      "body": "السواق {{1}} وصل عندك!\nكودك السري: {{2}}\nعطيه هذا الكود باش يأكد الاستلام.",
+      "example": {
+        "body": [
+          ["محمد علي", "5842"]
+        ]
+      }
+    },
+    {
+      "name": "payout_notice",
+      "category": "TRANSACTIONAL",
+      "language": "ar",
+      "body": "تم التسليم بنجاح!\nفلوسك: {{1}} دينار\nطريقة الدفع: {{2}}\nنشكرك يا عمي، بارك الله فيك",
+      "example": {
+        "body": [
+          ["150", "تحويل بريدي D17"]
+        ]
+      }
+    },
+    {
+      "name": "payment_status",
+      "category": "TRANSACTIONAL",
+      "language": "ar",
+      "body": "آخر معاملاتك:\n{{1}}",
+      "example": {
+        "body": [
+          ["15 مارس: 200 بيضة → 150 دينار (مدفوع)\n10 مارس: 50 لتر زيت → 500 دينار (في الانتظار)"]
+        ]
+      }
+    }
+  ]
+}

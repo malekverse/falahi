@@ -129,9 +129,14 @@
 - [x] Privacy policy published (INDP compliance)
 - [x] Terms of service published
 - [ ] WA message templates approved by Meta
+      → See `docs/meta-whatsapp/SUBMISSION_GUIDE.md` for step-by-step
+      → Template JSON ready at `docs/meta-whatsapp/templates.json`
 - [x] Admin can process manual D17 payouts
 - [x] Error monitoring configured (Sentry free tier)
 - [ ] Weekly automated DB backup confirmed
+      → Script ready at `scripts/backup-db.ps1`
+      → GitHub Action ready at `.github/workflows/db-backup.yml`
+      → Requires Docker or GitHub secrets `SUPABASE_ACCESS_TOKEN` + `SUPABASE_DB_PASSWORD`
 - [x] Dispute resolution process documented
 
 **Target metrics:**

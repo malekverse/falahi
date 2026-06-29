@@ -1,121 +1,45 @@
-# BLOCKERS.md — Items Requiring Human Action
+# BLOCKERS.md — Current Blocking Issues
 
-## Blocker 1: Supabase Project (Blocks Phase 0, 5, 6 items)
+## 1. Meta WhatsApp Message Templates — Awaiting Approval
 
-**What needs to happen:**
-1. Go to https://supabase.com → Create a new project (free tier)
-2. Enable PostGIS extension in the SQL editor:
-   ```sql
-   CREATE EXTENSION IF NOT EXISTS postgis;
-   ```
-3. Copy the project URL, anon key, and service_role key from Settings → API
-4. Put them in `apps/web/.env.local`:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-   SUPABASE_SERVICE_ROLE_KEY=eyJ...
-   ```
-5. Also put them in `apps/driver/.env` (as `EXPO_PUBLIC_SUPABASE_*`)
-6. Link the CLI and apply migrations:
-   ```bash
-   supabase link --project-ref <ref>
-   supabase db push
-   ```
-7. Generate TypeScript types:
-   ```bash
-   pnpm db:generate-types
-   ```
+**What's blocked:** Business-initiated WhatsApp messages (welcome, confirmations, OTP, payouts) cannot be sent without approved templates.
 
-**Unblocks:** Phase 0 (migrations, RLS, auth), Phase 5 (hub, geo-fence, zones, sub-trips), Phase 6 (DB backup)
+**Current status:** Template JSON files created at `docs/meta-whatsapp/templates.json`. Submission guide at `docs/meta-whatsapp/SUBMISSION_GUIDE.md`.
 
-## Blocker 2: Meta WhatsApp Cloud API (Blocks Phase 1, 6 items)
+**Unblock action:**
+1. Log into https://business.facebook.com/wa/manage/message-templates/
+2. Create each template from `docs/meta-whatsapp/templates.json`
+3. Wait for Meta review (1–7 days typical)
+4. Once approved, no code changes needed — `@filahi/utils` sends templates by name
 
-**What needs to happen:**
-1. Go to https://developers.facebook.com → Create a Business App
-2. Add WhatsApp product → Set up Cloud API
-3. In the app dashboard, copy the Phone Number ID and Access Token
-4. Generate an App Secret for webhook signature verification
-5. Set up webhook URL (after Vercel deploy or ngrok):
-   - URL: `https://your-domain.vercel.app/api/webhooks/whatsapp`
-   - Verify token: choose any string
-6. Subscribe to `messages` webhook field
-7. Add to `.env.local`:
-   ```
-   META_WA_PHONE_NUMBER_ID=123456789012345
-   META_WA_ACCESS_TOKEN=EAAxxxx...
-   META_WA_WEBHOOK_VERIFY_TOKEN=your-secret
-   META_WA_APP_SECRET=abc123...
-   ```
-
-**Unblocks:** Phase 1 (bot verification, message handling), Phase 6 (WA template approval)
-
-## Blocker 3: AI API Keys (Blocks Phase 1 transcription)
-
-**What needs to happen:**
-1. Option A: Go to https://console.groq.com → Sign up → Create API key
-   - Add `GROQ_API_KEY=gsk_...` to `.env.local`
-   - Add `STT_PROVIDER=groq`
-2. Option B: Go to https://platform.openai.com → Create API key
-   - Add `OPENAI_API_KEY=sk-...` to `.env.local`
-   - Add `STT_PROVIDER=openai`
-3. For LLM extraction, add one of:
-   - `ANTHROPIC_API_KEY=sk-ant-...` + `LLM_PROVIDER=claude`
-   - Or reuse `OPENAI_API_KEY` + `LLM_PROVIDER=openai`
-
-**Unblocks:** Phase 1 (Darija transcription, LLM extraction)
-
-## Blocker 4: EAS Build (Blocks Phase 3 APK distribution)
-
-**What needs to happen:**
-1. Install EAS CLI: `npm install -g eas-cli`
-2. Login: `eas login`
-3. Build: `cd apps/driver && eas build --platform android --profile preview`
-4. The APK will be downloadable from Expo dashboard after build
-
-**Unblocks:** Phase 3 (Android APK distribution)
-
-## Blocker 5: Sentry DSN (Blocks error monitoring)
-
-**What needs to happen:**
-1. Go to https://sentry.io → Create account → Create Next.js project
-2. Copy the DSN from Project Settings → Client Keys (DSN)
-3. Add to `.env.local`:
-   ```
-   SENTRY_DSN=https://xxx@xxx.ingest.us.sentry.io/1234567
-   ```
-   (Optional for public: `NEXT_PUBLIC_SENTRY_DSN=...` for client-side errors)
-
-**Note:** Sentry config files are written and committed. Only the DSN env var is missing.
+**Why it's stuck here:** Template submission requires Meta Business Platform UI access — cannot be automated via CLI.
 
 ---
 
-## All Code-Level Items Complete
+## 2. Weekly Automated DB Backup — Requires Docker
 
-Every enhancement and feature that can be built without a live Supabase DB, WhatsApp API key, AI API key, EAS build, or Sentry DSN has been implemented and committed. Remaining unchecked ROADMAP items:
+**What's blocked:** `supabase db dump` requires a running local Supabase instance (which needs Docker).
 
-- **Phase 0** (5 items): Supabase project, migrations, types, RLS tests, auth config
-- **Phase 6** (2 items): WA templates, DB backup
-- **Phase 7** (23 items): All post-revenue features
+**Current status:** Backup script at `scripts/backup-db.ps1`. GitHub Action workflow at `.github/workflows/db-backup.yml` configured for weekly runs.
 
-These items require human action at the services listed below. Once the Supabase project is created and keys added, run:
+**Unblock action:**
+1. Install Docker Desktop on your machine
+2. Run `supabase start` to spin up local Supabase
+3. Run `scripts/backup-db.ps1` to verify backup works
+4. Or skip local entirely: add `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD` to GitHub secrets; the workflow dumps directly from the remote DB
 
-```bash
-supabase link --project-ref <ref>
-supabase db push
-pnpm db:generate-types
-pnpm typecheck
-```
-
-Then proceed with Phase 0 remaining items.
+**Why it's stuck here:** No Docker runtime available in this environment. The GitHub Action approach works without Docker once secrets are configured.
 
 ---
 
-## Summary
+## 3. `CRON_SECRET` — Not Deployed
 
-| Blocker | Blocks | Human Action Required |
-|---|---|---|
-| Supabase project | Phase 0, 5, 6 | Create project, enable PostGIS, add keys |
-| Meta WhatsApp API | Phase 1, 6 | Create Business App, setup webhook, add keys |
-| AI API keys | Phase 1 | Create Groq or OpenAI key, add to env |
-| EAS Build | Phase 3 | Install EAS CLI, run eas build |
-| Sentry DSN | Error monitoring | Create Sentry project, copy DSN |
+**What's blocked:** The 3 Vercel cron endpoints (`/api/cron/recurring-orders`, `/api/cron/expire-listings`, `/api/cron/stale-trips`) require the `CRON_SECRET` environment variable to be set in Vercel's dashboard.
+
+**Current status:** Config file at `apps/web/vercel.json` with schedules defined. Cron endpoints are deployed with the web app.
+
+**Unblock action:**
+1. Generate a random secret: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+2. Add `CRON_SECRET` to Vercel project environment variables
+3. Deploy the app
+4. Verify: `curl -H "Authorization: Bearer <secret>" https://your-domain.vercel.app/api/cron/expire-listings`
