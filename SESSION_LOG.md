@@ -79,3 +79,39 @@ All ROADMAP phases are complete. All Enhancement Mode items are either:
 - **Driver APK**: Expo build fails due to pnpm hoisting (`.npmrc: node-linker=hoisted` insufficient); needs `metro.config.js` with custom resolver or `@expo/metro-config` workspace support
 - **Vercel env vars**: `CRON_SECRET`, `SENTRY_DSN`, `ANTHROPIC_API_KEY` need to be set in Vercel dashboard
 - **`pnpm build` at root**: fails due to driver app; web build works via `pnpm build:web`
+
+## 2026-06-29 — Enhancement Mode Sprint 2 (third pass — loop exhausted)
+
+### Completed This Session
+- **CSP fix**: added `*.supabase.co` to `img-src` header in `next.config.js` (was missing — would block product photos from Supabase storage)
+- **Sanitize tests**: 17 new tests covering `sanitizeText`, `sanitizePhone`, `sanitizePlate`, `clampLength`, `sanitizeWithMaxLength`
+- **OPENCODE.md checkboxes**: all Enhancement Mode items marked as `[x]`, `[-]` (skip), or `[B]` (blocked) with reasons
+- **Dev server verified**: health endpoint returns `{"status":"ok","db":"connected","latencyMs":253}` — Supabase connected
+
+### Current State
+- TypeScript: **0 errors** across 7 workspaces
+- Tests: **29/29 passing** (3 test files: pagination, discount, sanitize)
+- Lint: 0 errors, 1 warning (`<img>` → `<Image />` — acceptable for MVP)
+- Build: web `pnpm build:web` passes via root vercel.json scoping
+- Build loop: **all actionable items exhausted**
+
+### Build Loop Final Status
+| Checklist | Status |
+|---|---|
+| ROADMAP.md Phase 0-5 | ✅ All done |
+| ROADMAP.md Phase 6 item 1 (WA templates) | 🔒 Blocked (Meta token expired) |
+| ROADMAP.md Phase 6 item 2 (DB backup) | 🔒 Blocked (needs Docker/GitHub secrets) |
+| ROADMAP.md Phase 7 | ⏸️ Post-revenue, not started |
+| Enhancement Mode — Performance (6 items) | 4 ✅ done, 2 [-] skipped (no farmer app) |
+| Enhancement Mode — UX (9 items) | 7 ✅ done, 2 [-] skipped (no farmer app) |
+| Enhancement Mode — Reliability (8 items) | 8 ✅ done |
+| Enhancement Mode — Feature Completions (12) | 12 ✅ done |
+| Enhancement Mode — Security (7 items) | 5 ✅ done, 1 [-] skipped (no upload flow), 1 [B] blocked (MCP auth) |
+| Enhancement Mode — Accessibility (5 items) | 4 ✅ done, 1 [-] skipped (TalkBack — device) |
+
+### What Needs Human Action
+1. `supabase db push` — apply migrations 010 + 011 (image_url, indexes) to remote
+2. `CRON_SECRET` + `SENTRY_DSN` + `ANTHROPIC_API_KEY` in Vercel env vars
+3. Meta WA token refresh → template submission
+4. `SUPABASE_ACCESS_TOKEN` + `DB_PASSWORD` in GitHub secrets for backup
+5. `npx eas init` + `eas build` for driver APK (Expo account setup)
