@@ -57,6 +57,7 @@ export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; rol
     if (error) {
       alert(error.message)
     } else {
+      await Haptics.notificationAsync('success').catch(() => {})
       await startBackgroundTracking(tripId)
       fetchTrip()
     }
@@ -182,7 +183,7 @@ export function TripDetailScreen({ tripId, role, onBack }: { tripId: string; rol
 
       {role === 'long_haul' && trip.status === 'in_transit' && (
         <TouchableOpacity style={s.actionBtn} onPress={async () => {
-          setActionLoading(true); const { error } = await supabase.from('trips').update({ status: 'arrived_hub' }).eq('id', tripId).eq('status', 'in_transit'); if (!error) fetchTrip(); setActionLoading(false)
+          setActionLoading(true); const { error } = await supabase.from('trips').update({ status: 'arrived_hub' }).eq('id', tripId).eq('status', 'in_transit'); if (!error) { await Haptics.notificationAsync('success').catch(() => {}); fetchTrip(); } setActionLoading(false)
         }} disabled={actionLoading}>
           <Text style={s.actionBtnText}>{actionLoading ? '...' : 'Arrivé au hub'}</Text>
         </TouchableOpacity>
