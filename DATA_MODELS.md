@@ -111,6 +111,7 @@ CREATE TABLE inventory_items (
   status                  TEXT NOT NULL DEFAULT 'pending_confirmation'
                             CHECK (status IN ('pending_confirmation', 'available', 'reserved', 'sold', 'expired')),
   source                  TEXT DEFAULT 'whatsapp_bot' CHECK (source IN ('whatsapp_bot', 'admin', 'web')),
+  image_url               TEXT,                  -- Supabase Storage signed URL (1h expiry)
   raw_transcription       TEXT,                  -- Original Darija text from Whisper
   ai_confidence_score     NUMERIC(3,2),          -- 0.00 to 1.00
   whatsapp_message_id     TEXT UNIQUE,           -- For idempotency

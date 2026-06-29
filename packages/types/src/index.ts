@@ -71,6 +71,7 @@ export interface InventoryItem {
   platform_price_millimes: Millimes | null
   harvest_date: string | null
   shelf_life_days: number | null
+  image_url: string | null
   notes: string | null
   status: InventoryStatus
   expires_at: string | null
