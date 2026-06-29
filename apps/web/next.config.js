@@ -21,7 +21,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://demotiles.maplibre.org",
+              "img-src 'self' data: blob: https://*.supabase.co https://*.tile.openstreetmap.org https://demotiles.maplibre.org",
               "connect-src 'self' https://*.supabase.co https://graph.facebook.com https://api.openai.com https://api.groq.com https://*.ingest.us.sentry.io",
               "frame-src 'none'",
               "object-src 'none'",
