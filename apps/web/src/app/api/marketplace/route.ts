@@ -58,6 +58,11 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(
     cursorResponse(items || [], PAGE_LIMIT),
-    { headers: { 'X-Total-Count': String(count ?? 0) } },
+    {
+      headers: {
+        'X-Total-Count': String(count ?? 0),
+        'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
+      },
+    },
   )
 }

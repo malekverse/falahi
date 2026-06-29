@@ -21,47 +21,37 @@ export default async function MarketplacePage({
   const params = await searchParams
   const supabase = await createServerSupabaseClient()
 
-  const { data: regions } = await supabase
-    .from('inventory_items')
-    .select('location_name')
-    .eq('status', 'available')
-    .not('location_name', 'is', null)
-    .order('location_name')
+  const [regionsResult, listingsResult] = await Promise.all([
+    supabase
+      .from('inventory_items')
+      .select('location_name')
+      .eq('status', 'available')
+      .not('location_name', 'is', null)
+      .order('location_name'),
+    (() => {
+      let q = supabase
+        .from('inventory_items')
+        .select('*')
+        .eq('status', 'available')
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
+        .limit(INITIAL_LIMIT)
+      if (params.category) q = q.eq('product_category', params.category)
+      if (params.region) q = q.eq('location_name', params.region)
+      if (params.minPrice) {
+        const m = parseInt(params.minPrice) * 1000
+        if (!isNaN(m)) q = q.gte('platform_price_millimes', m)
+      }
+      if (params.maxPrice) {
+        const m = parseInt(params.maxPrice) * 1000
+        if (!isNaN(m)) q = q.lte('platform_price_millimes', m)
+      }
+      return q
+    })(),
+  ])
 
-  const uniqueRegions = [...new Set<string>((regions ?? []).map((r) => r.location_name).filter(Boolean))]
-
-  let query = supabase
-    .from('inventory_items')
-    .select('*')
-    .eq('status', 'available')
-    .order('created_at', { ascending: false })
-    .order('id', { ascending: false })
-    .limit(INITIAL_LIMIT)
-
-  if (params.category) {
-    query = query.eq('product_category', params.category)
-  }
-
-  if (params.region) {
-    query = query.eq('location_name', params.region)
-  }
-
-  if (params.minPrice) {
-    const minMillimes = parseInt(params.minPrice) * 1000
-    if (!isNaN(minMillimes)) {
-      query = query.gte('platform_price_millimes', minMillimes)
-    }
-  }
-
-  if (params.maxPrice) {
-    const maxMillimes = parseInt(params.maxPrice) * 1000
-    if (!isNaN(maxMillimes)) {
-      query = query.lte('platform_price_millimes', maxMillimes)
-    }
-  }
-
-  const { data: initialListings } = await query
-  const items = (initialListings || []) as ListingCardItem[]
+  const uniqueRegions = [...new Set<string>((regionsResult.data ?? []).map((r) => r.location_name).filter(Boolean))]
+  const items = (listingsResult.data || []) as ListingCardItem[]
   const last = items[items.length - 1]
   const initialCursor = last
     ? encodeCursor({ createdAt: last.created_at, id: last.id })

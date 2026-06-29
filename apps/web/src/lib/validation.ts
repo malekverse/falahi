@@ -1,5 +1,9 @@
 import { z } from 'zod'
 
+export function zodMaxLength(max: number, fieldName = 'Champ') {
+  return z.string().max(max, `${fieldName} ne peut pas dépasser ${max} caractères`)
+}
+
 export const OrderCreateSchema = z.object({
   inventoryItemId: z.string().uuid(),
   quantity: z.number().positive(),
