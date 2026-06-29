@@ -1,9 +1,10 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { Filters } from '@/components/marketplace/Filters'
 import { LoadMore } from '@/components/marketplace/LoadMore'
+import { encodeCursor } from '@filahi/utils'
 import type { ListingCardItem } from '@/components/marketplace/ListingCard'
 
-const INITIAL_LIMIT = 12
+const INITIAL_LIMIT = 20
 
 interface SearchParams {
   category?: string
@@ -34,6 +35,7 @@ export default async function MarketplacePage({
     .select('*')
     .eq('status', 'available')
     .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
     .limit(INITIAL_LIMIT)
 
   if (params.category) {
@@ -59,6 +61,11 @@ export default async function MarketplacePage({
   }
 
   const { data: initialListings } = await query
+  const items = (initialListings || []) as ListingCardItem[]
+  const last = items[items.length - 1]
+  const initialCursor = last
+    ? encodeCursor({ createdAt: last.created_at, id: last.id })
+    : undefined
 
   return (
     <div>
@@ -72,7 +79,8 @@ export default async function MarketplacePage({
       <Filters regions={uniqueRegions} />
 
       <LoadMore
-        initialItems={(initialListings || []) as ListingCardItem[]}
+        initialItems={items}
+        initialCursor={initialCursor}
         category={params.category}
         region={params.region}
         minPrice={params.minPrice}

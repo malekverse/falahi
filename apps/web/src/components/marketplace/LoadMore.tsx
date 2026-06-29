@@ -5,18 +5,21 @@ import { ListingCard, type ListingCardItem } from './ListingCard'
 
 export function LoadMore({
   initialItems,
+  initialCursor,
   category,
   region,
   minPrice,
   maxPrice,
 }: {
   initialItems: ListingCardItem[]
+  initialCursor?: string
   category?: string
   region?: string
   minPrice?: string
   maxPrice?: string
 }) {
   const [items, setItems] = useState<ListingCardItem[]>(initialItems)
+  const [cursor, setCursor] = useState<string | undefined>(initialCursor)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
@@ -24,7 +27,7 @@ export function LoadMore({
     setLoading(true)
     try {
       const params = new URLSearchParams()
-      params.set('cursor', String(items.length))
+      if (cursor) params.set('cursor', cursor)
       if (category) params.set('category', category)
       if (region) params.set('region', region)
       if (minPrice) params.set('minPrice', minPrice)
@@ -33,6 +36,7 @@ export function LoadMore({
       const res = await fetch(`/api/marketplace?${params}`)
       const data = await res.json()
       setItems((prev) => [...prev, ...data.items])
+      setCursor(data.nextCursor)
       setHasMore(data.hasMore)
     } finally {
       setLoading(false)

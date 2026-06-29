@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { getOffset, offsetResponse } from '@filahi/utils'
+import { decodeCursor, cursorResponse } from '@filahi/utils'
 import { MarketplaceQuerySchema } from '@/lib/validation'
 
 const PAGE_LIMIT = 20
@@ -13,7 +13,14 @@ export async function GET(req: NextRequest) {
   }
 
   const { cursor, category, region, minPrice, maxPrice } = parsed.data
-  const offset = getOffset({ cursor })
+  let cursorCreatedAt: string | undefined
+  let cursorId: string | undefined
+
+  if (cursor) {
+    const c = decodeCursor(cursor)
+    cursorCreatedAt = c.createdAt
+    cursorId = String(c.id)
+  }
 
   const supabase = await createServerSupabaseClient()
 
@@ -22,7 +29,14 @@ export async function GET(req: NextRequest) {
     .select('*', { count: 'exact' })
     .eq('status', 'available')
     .order('created_at', { ascending: false })
-    .range(offset, offset + PAGE_LIMIT - 1)
+    .order('id', { ascending: false })
+    .limit(PAGE_LIMIT)
+
+  if (cursorCreatedAt && cursorId) {
+    query = query.or(
+      `created_at.lt.${cursorCreatedAt},and(created_at.eq.${cursorCreatedAt},id.lt.${cursorId})`,
+    )
+  }
 
   if (category) {
     query = query.eq('product_category', category)
@@ -43,7 +57,7 @@ export async function GET(req: NextRequest) {
   const { data: items, count } = await query
 
   return NextResponse.json(
-    offsetResponse(items || [], offset, PAGE_LIMIT),
+    cursorResponse(items || [], PAGE_LIMIT),
     { headers: { 'X-Total-Count': String(count ?? 0) } },
   )
 }
