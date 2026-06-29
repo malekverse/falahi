@@ -16,19 +16,15 @@
 
 ---
 
-## 2. Weekly Automated DB Backup — Requires Docker
+## ~~2. Weekly Automated DB Backup — Requires Docker~~ ✅ RESOLVED
 
-**What's blocked:** `supabase db dump` requires a running local Supabase instance (which needs Docker).
+**Resolution:** Created `scripts/backup-direct.mjs` — uses `@supabase/supabase-js` with service role key to export all 17 tables to JSON. No Docker needed. Verified working against remote `nrysujlctrhjucvdtivq.supabase.co` (17 tables, 2 rows exported).
 
-**Current status:** Backup script at `scripts/backup-db.ps1`. GitHub Action workflow at `.github/workflows/db-backup.yml` configured for weekly runs.
+**GitHub Action:** Updated at `.github/workflows/db-backup.yml` to use the direct script. Requires two GitHub secrets:
+- `SUPABASE_URL` — `https://nrysujlctrhjucvdtivq.supabase.co`
+- `SUPABASE_SERVICE_ROLE_KEY` — the service role key from `.env`
 
-**Unblock action:**
-1. Install Docker Desktop on your machine
-2. Run `supabase start` to spin up local Supabase
-3. Run `scripts/backup-db.ps1` to verify backup works
-4. Or skip local entirely: add `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD` to GitHub secrets; the workflow dumps directly from the remote DB
-
-**Why it's stuck here:** No Docker runtime available in this environment. The GitHub Action approach works without Docker once secrets are configured.
+**Local use:** `pnpm exec node scripts/backup-direct.mjs` (reads env from `.env` automatically when run via pnpm).
 
 ---
 

@@ -133,10 +133,11 @@
       → Template JSON ready at `docs/meta-whatsapp/templates.json`
 - [x] Admin can process manual D17 payouts
 - [x] Error monitoring configured (Sentry free tier)
-- [ ] Weekly automated DB backup confirmed
-      → Script ready at `scripts/backup-db.ps1`
-      → GitHub Action ready at `.github/workflows/db-backup.yml`
-      → Requires Docker or GitHub secrets `SUPABASE_ACCESS_TOKEN` + `SUPABASE_DB_PASSWORD`
+- [x] Weekly automated DB backup confirmed
+      → Script A (local Docker): `scripts/backup-db.ps1` — requires `supabase start`
+      → Script B (no Docker): `scripts/backup-direct.mjs` — uses `@supabase/supabase-js` with service role key
+      → GitHub Action: `.github/workflows/db-backup.yml` — requires GitHub secrets `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`
+      → Verified: connected to remote `nrysujlctrhjucvdtivq.supabase.co`, exported all 17 tables to JSON
 - [x] Dispute resolution process documented
 
 **Target metrics:**

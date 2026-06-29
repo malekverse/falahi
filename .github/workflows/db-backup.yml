@@ -9,18 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: supabase/setup-cli@v1
+      - uses: actions/setup-node@v4
         with:
-          version: latest
-      - name: Dump remote database
+          node-version: 20
+      - name: Install dependencies
+        run: npm install @supabase/supabase-js
+      - name: Backup all tables to JSON
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-        run: |
-          mkdir -p backups
-          supabase db dump \
-            --db-url "postgresql://postgres:$DB_PASSWORD@db.nrysujlctrhjucvdtivq.supabase.co:5432/postgres" \
-            --file "backups/filahi-$(date +%Y%m%d-%H%M%S).sql"
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/backup-direct.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: db-backup-${{ github.run_id }}

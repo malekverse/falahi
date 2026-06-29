@@ -247,3 +247,29 @@
 - ✅ Simple to test: just HTTP GET with auth header
 - ⚠️ Requires `CRON_SECRET` env var in Vercel dashboard
 - ⚠️ 60-second Vercel function timeout could be tight for large batches — mitigated by `maxDuration: 60` and idempotent RPCs
+
+---
+
+## ADR-017: Docker-Free DB Backup via Supabase JS Client
+
+**Date:** 2026-06-29
+
+**Status:** Accepted
+
+**Context:** The Phase 6 checklist requires a weekly automated DB backup. The original approach used `supabase db dump` which requires Docker (for local) or the Supabase CLI with an access token. Docker is unavailable in this environment and adding `SUPABASE_ACCESS_TOKEN` as a GitHub secret is an extra setup step.
+
+**Decision:** Write a Node.js backup script (`scripts/backup-direct.mjs`) that uses `@supabase/supabase-js` with the existing service role key (`SUPABASE_SERVICE_ROLE_KEY`) to:
+1. Iterate over all 17 user-created tables
+2. Export each table to a separate JSON file
+3. Create a `manifest.json` with row counts and timestamps
+4. Write a `backups/latest.json` pointer for easy reference
+5. No Docker, no Supabase CLI, no external dependencies beyond `@supabase/supabase-js`
+
+The GitHub Action at `.github/workflows/db-backup.yml` was updated to use this script as the primary method.
+
+**Consequences:**
+- ✅ Works locally with zero setup: `pnpm exec node scripts/backup-direct.mjs`
+- ✅ Works in CI with just a service role key secret (no Supabase access token needed)
+- ✅ All tables exported as human-readable JSON
+- ⚠️ JSON export is not a full SQL dump (no schema, no indexes, no functions) — for disaster recovery, the migration files serve as the schema source of truth
+- ⚠️ JSON files may be large for tables with many rows (mitigated by compression via upload-artifact)
