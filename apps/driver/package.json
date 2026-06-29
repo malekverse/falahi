@@ -7,7 +7,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "build": "expo export",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "postinstall": "cd ../.. && pnpm install --frozen-lockfile"
   },
   "dependencies": {
     "@filahi/types": "workspace:*",

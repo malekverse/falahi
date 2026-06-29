@@ -79,7 +79,7 @@
 - [x] OTP entry at delivery
 - [x] Trip history screen
 - [x] Foreground notification shown during active trip
-- [ ] Android APK buildable via EAS
+- [x] Android APK buildable via EAS
 
 **Critical test:** Lock your Android phone, put it in your pocket, drive for 30 minutes. Verify continuous coordinate pings received in admin panel.
 

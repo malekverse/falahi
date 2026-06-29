@@ -5,13 +5,24 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#faf7f0"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "tn.filahi.driver",
+      "infoPlist": {
+        "UIBackgroundModes": ["location", "fetch"]
+      }
     },
     "android": {
       "package": "tn.filahi.driver",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2d6a4f"
+      },
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
@@ -24,9 +35,24 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Filahi a besoin de votre position pour suivre vos livraisons."
+          "locationAlwaysAndWhenInUsePermission": "Filahi a besoin de votre position pour suivre vos livraisons.",
+          "locationAlwaysPermission": "Cette application a besoin d'accéder à votre position même en arrière-plan pour suivre vos livraisons."
         }
-      ]
-    ]
+      ],
+      "expo-task-manager"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/",
+      "enabled": true,
+      "fallbackToCacheTimeout": 0
+    }
   }
 }

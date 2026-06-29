@@ -1,0 +1,53 @@
+{
+  "cli": {
+    "version": ">= 10.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://nrysujlctrhjucvdtivq.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Ch5vyfWBBPOneMW75x20Lw_HJwc83Lz",
+        "EXPO_PUBLIC_BG_LOCATION_TASK": "DRIVER_LOCATION_TASK",
+        "EXPO_PUBLIC_GPS_INTERVAL_MS": "45000",
+        "EXPO_PUBLIC_GPS_CACHE_FLUSH_THRESHOLD": "20",
+        "EXPO_PUBLIC_APP_ENV": "development"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://nrysujlctrhjucvdtivq.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Ch5vyfWBBPOneMW75x20Lw_HJwc83Lz",
+        "EXPO_PUBLIC_BG_LOCATION_TASK": "DRIVER_LOCATION_TASK",
+        "EXPO_PUBLIC_GPS_INTERVAL_MS": "45000",
+        "EXPO_PUBLIC_GPS_CACHE_FLUSH_THRESHOLD": "20",
+        "EXPO_PUBLIC_APP_ENV": "preview"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://nrysujlctrhjucvdtivq.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Ch5vyfWBBPOneMW75x20Lw_HJwc83Lz",
+        "EXPO_PUBLIC_BG_LOCATION_TASK": "DRIVER_LOCATION_TASK",
+        "EXPO_PUBLIC_GPS_INTERVAL_MS": "45000",
+        "EXPO_PUBLIC_GPS_CACHE_FLUSH_THRESHOLD": "20",
+        "EXPO_PUBLIC_APP_ENV": "production"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
