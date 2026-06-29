@@ -72,6 +72,7 @@ export function RatingForm({ orderId, tripId, targetId, targetType, targetLabel,
       <StarRating value={score} onChange={setScore} size="md" />
 
       <textarea
+        aria-label="Commentaire (optionnel)"
         className="mb-2 mt-3 w-full rounded border border-gray-200 p-2 text-sm"
         rows={2}
         value={reviewText}

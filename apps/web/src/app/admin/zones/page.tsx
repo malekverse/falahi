@@ -162,6 +162,7 @@ export default function AdminZonesPage() {
             </button>
             <input
               type="text"
+              aria-label="Nom de la zone"
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
               value={zoneName}
               onChange={(e) => setZoneName(e.target.value)}
