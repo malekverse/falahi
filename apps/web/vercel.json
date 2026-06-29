@@ -1,5 +1,4 @@
 {
-  "buildCommand": "pnpm --filter web build",
   "crons": [
     {
       "path": "/api/cron/recurring-orders",
