@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { AcceptSubTripSchema } from '@/lib/validation'
 
 export async function POST(req: Request) {
   try {
@@ -18,10 +19,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Seuls les coursiers peuvent accepter des sous-trajets' }, { status: 403 })
     }
 
-    const { sub_trip_id } = await req.json()
-    if (!sub_trip_id) {
-      return NextResponse.json({ error: 'sub_trip_id requis' }, { status: 400 })
+    const raw = await req.json()
+    const parsed = AcceptSubTripSchema.safeParse(raw)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Données invalides', details: parsed.error.flatten() }, { status: 400 })
     }
+
+    const { sub_trip_id } = parsed.data
 
     const { data, error } = await supabase.rpc('accept_sub_trip', {
       sub_trip_id,

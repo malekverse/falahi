@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { ValidateSubTripOTPSchema } from '@/lib/validation'
 
 export async function POST(req: Request) {
   try {
@@ -18,10 +19,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Seuls les coursiers peuvent valider des OTP de sous-trajets' }, { status: 403 })
     }
 
-    const { sub_trip_id, otp } = await req.json()
-    if (!sub_trip_id || !otp) {
-      return NextResponse.json({ error: 'sub_trip_id et otp requis' }, { status: 400 })
+    const raw = await req.json()
+    const parsed = ValidateSubTripOTPSchema.safeParse(raw)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Données invalides', details: parsed.error.flatten() }, { status: 400 })
     }
+
+    const { sub_trip_id, otp } = parsed.data
 
     const { data, error } = await supabase.rpc('validate_sub_trip_delivery_otp', {
       sub_trip_id,

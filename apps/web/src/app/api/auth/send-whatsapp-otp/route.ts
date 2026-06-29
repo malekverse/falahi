@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server'
 import { generateOTP, sendWhatsAppMessage } from '@filahi/utils'
 import { createClient } from '@supabase/supabase-js'
+import { SendWhatsAppOTPSchema } from '@/lib/validation'
 
 export async function POST(request: Request) {
   try {
-    const { phone } = (await request.json()) as { phone: string }
+    const raw = await request.json()
+    const parsed = SendWhatsAppOTPSchema.safeParse(raw)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 })
+    }
 
+    const { phone } = parsed.data
     const normalized = phone.startsWith('+') ? phone : `+216${phone.replace(/^00216/, '')}`
     if (!/^\+216\d{8}$/.test(normalized)) {
       return NextResponse.json({ error: 'Invalid Tunisian phone number' }, { status: 400 })

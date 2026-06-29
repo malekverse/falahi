@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { CreateRecurringOrderSchema, CancelRecurringOrderSchema } from '@/lib/validation'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,19 +20,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Only buyers can manage recurring orders' }, { status: 403 })
     }
 
-    const { orderId, recurrenceInterval, recurrenceDay } = await request.json()
-
-    if (!orderId || !recurrenceInterval || recurrenceDay === undefined) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    const raw = await request.json()
+    const parsed = CreateRecurringOrderSchema.safeParse(raw)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid request', details: parsed.error.flatten() }, { status: 400 })
     }
 
-    if (!['weekly', 'biweekly', 'monthly'].includes(recurrenceInterval)) {
-      return NextResponse.json({ error: 'Invalid recurrence interval' }, { status: 400 })
-    }
-
-    if (recurrenceDay < 0 || recurrenceDay > 6) {
-      return NextResponse.json({ error: 'Invalid day (0=Sun, 6=Sat)' }, { status: 400 })
-    }
+    const { orderId, recurrenceInterval, recurrenceDay } = parsed.data
 
     const { data: order } = await supabase
       .from('orders')
@@ -109,10 +104,13 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { orderId } = await request.json()
-    if (!orderId) {
-      return NextResponse.json({ error: 'Missing orderId' }, { status: 400 })
+    const raw = await request.json()
+    const parsed = CancelRecurringOrderSchema.safeParse(raw)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Missing or invalid orderId' }, { status: 400 })
     }
+
+    const { orderId } = parsed.data
 
     const { error } = await supabase
       .from('orders')

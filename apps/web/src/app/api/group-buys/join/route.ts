@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { JoinGroupBuySchema } from '@/lib/validation'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,10 +20,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Only buyers can join group buys' }, { status: 403 })
     }
 
-    const { groupBuyId, quantity } = await request.json()
-    if (!groupBuyId || !quantity || quantity <= 0) {
-      return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+    const raw = await request.json()
+    const parsed = JoinGroupBuySchema.safeParse(raw)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid request', details: parsed.error.flatten() }, { status: 400 })
     }
+
+    const { groupBuyId, quantity } = parsed.data
 
     const { data: result, error } = await supabase.rpc('join_group_buy', {
       group_buy_id: groupBuyId,

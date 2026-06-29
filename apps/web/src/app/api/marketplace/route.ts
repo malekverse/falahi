@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { getOffset, offsetResponse } from '@filahi/utils'
+import { MarketplaceQuerySchema } from '@/lib/validation'
 
 const PAGE_LIMIT = 20
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  const cursor = searchParams.get('cursor') ?? undefined
-  const category = searchParams.get('category')
-  const region = searchParams.get('region')
-  const minPriceTnd = searchParams.get('minPrice')
-  const maxPriceTnd = searchParams.get('maxPrice')
+  const parsed = MarketplaceQuerySchema.safeParse(Object.fromEntries(searchParams))
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid query parameters', details: parsed.error.flatten() }, { status: 400 })
+  }
+
+  const { cursor, category, region, minPrice, maxPrice } = parsed.data
   const offset = getOffset({ cursor })
 
   const supabase = await createServerSupabaseClient()
@@ -30,18 +32,12 @@ export async function GET(req: NextRequest) {
     query = query.eq('location_name', region)
   }
 
-  if (minPriceTnd) {
-    const minMillimes = parseInt(minPriceTnd) * 1000
-    if (!isNaN(minMillimes)) {
-      query = query.gte('platform_price_millimes', minMillimes)
-    }
+  if (minPrice !== undefined) {
+    query = query.gte('platform_price_millimes', minPrice * 1000)
   }
 
-  if (maxPriceTnd) {
-    const maxMillimes = parseInt(maxPriceTnd) * 1000
-    if (!isNaN(maxMillimes)) {
-      query = query.lte('platform_price_millimes', maxMillimes)
-    }
+  if (maxPrice !== undefined) {
+    query = query.lte('platform_price_millimes', maxPrice * 1000)
   }
 
   const { data: items, count } = await query

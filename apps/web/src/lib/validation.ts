@@ -32,6 +32,59 @@ export const JoinGroupBuySchema = z.object({
   quantity: z.number().positive(),
 })
 
+export const TunisianPhoneSchema = z.string().transform((v) => {
+  const normalized = v.startsWith('+') ? v : `+216${v.replace(/^00216/, '')}`
+  return { normalized, valid: /^\+216\d{8}$/.test(normalized) }
+})
+
+export const SendWhatsAppOTPSchema = z.object({
+  phone: z.string(),
+})
+
+export const VerifyWhatsAppOTPSchema = z.object({
+  phone: z.string(),
+  otp: z.string().length(6),
+})
+
+export const CreateSubTripSchema = z.object({
+  parent_trip_id: z.string().uuid(),
+})
+
+export const AcceptSubTripSchema = z.object({
+  sub_trip_id: z.string().uuid(),
+})
+
+export const ValidateSubTripOTPSchema = z.object({
+  sub_trip_id: z.string().uuid(),
+  otp: z.string().min(4).max(6),
+})
+
+export const CreateRecurringOrderSchema = z.object({
+  orderId: z.string().uuid(),
+  recurrenceInterval: z.enum(['weekly', 'biweekly', 'monthly']),
+  recurrenceDay: z.number().int().min(0).max(6),
+})
+
+export const CancelRecurringOrderSchema = z.object({
+  orderId: z.string().uuid(),
+})
+
+export const MarketplaceQuerySchema = z.object({
+  cursor: z.string().optional(),
+  category: z.string().max(50).optional(),
+  region: z.string().max(100).optional(),
+  minPrice: z.coerce.number().nonnegative().optional(),
+  maxPrice: z.coerce.number().nonnegative().optional(),
+})
+
 export type OrderCreateInput = z.infer<typeof OrderCreateSchema>
 export type WhatsAppSendInput = z.infer<typeof WhatsAppSendSchema>
 export type InventoryUpdateInput = z.infer<typeof InventoryUpdateSchema>
+export type SendWhatsAppOTPInput = z.infer<typeof SendWhatsAppOTPSchema>
+export type VerifyWhatsAppOTPInput = z.infer<typeof VerifyWhatsAppOTPSchema>
+export type CreateSubTripInput = z.infer<typeof CreateSubTripSchema>
+export type AcceptSubTripInput = z.infer<typeof AcceptSubTripSchema>
+export type ValidateSubTripOTPInput = z.infer<typeof ValidateSubTripOTPSchema>
+export type CreateRecurringOrderInput = z.infer<typeof CreateRecurringOrderSchema>
+export type CancelRecurringOrderInput = z.infer<typeof CancelRecurringOrderSchema>
+export type MarketplaceQuery = z.infer<typeof MarketplaceQuerySchema>

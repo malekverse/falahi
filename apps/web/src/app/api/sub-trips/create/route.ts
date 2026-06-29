@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { CreateSubTripSchema } from '@/lib/validation'
 
 export async function POST(req: Request) {
   try {
@@ -18,10 +19,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
-    const { parent_trip_id } = await req.json()
-    if (!parent_trip_id) {
-      return NextResponse.json({ error: 'parent_trip_id requis' }, { status: 400 })
+    const raw = await req.json()
+    const parsed = CreateSubTripSchema.safeParse(raw)
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Données invalides', details: parsed.error.flatten() }, { status: 400 })
     }
+
+    const { parent_trip_id } = parsed.data
 
     const { data, error } = await supabase.rpc('create_sub_trips_for_hub_arrival', {
       parent_trip_id,
