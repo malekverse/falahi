@@ -1,5 +1,4 @@
 -- Trust Tier Auto-Upgrade Logic
--- Run after 002_ratings.sql
 
 CREATE OR REPLACE FUNCTION auto_upgrade_trust_tier()
 RETURNS TRIGGER AS $$
@@ -15,6 +14,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_auto_upgrade_tier ON driver_profiles;
 CREATE TRIGGER trg_auto_upgrade_tier
   BEFORE UPDATE OF trust_score, total_trips ON driver_profiles
   FOR EACH ROW

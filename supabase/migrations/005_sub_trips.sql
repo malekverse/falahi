@@ -1,6 +1,6 @@
 -- 004: Last-mile sub-trips for micro-hub cross-docking
 
-CREATE TABLE sub_trips (
+CREATE TABLE IF NOT EXISTS sub_trips (
   id                      UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   parent_trip_id          UUID NOT NULL REFERENCES trips(id) ON DELETE CASCADE,
   courier_id              UUID REFERENCES driver_profiles(id),
@@ -23,23 +23,26 @@ CREATE TABLE sub_trips (
   created_at              TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_sub_trips_status ON sub_trips (status);
-CREATE INDEX idx_sub_trips_courier ON sub_trips (courier_id);
-CREATE INDEX idx_sub_trips_parent ON sub_trips (parent_trip_id);
+CREATE INDEX IF NOT EXISTS idx_sub_trips_status ON sub_trips (status);
+CREATE INDEX IF NOT EXISTS idx_sub_trips_courier ON sub_trips (courier_id);
+CREATE INDEX IF NOT EXISTS idx_sub_trips_parent ON sub_trips (parent_trip_id);
 
 ALTER TABLE sub_trips ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Couriers read available sub_trips" ON sub_trips;
 CREATE POLICY "Couriers read available sub_trips"
   ON sub_trips FOR SELECT USING (
     EXISTS (SELECT 1 FROM driver_profiles WHERE id = auth.uid() AND role = 'courier')
     OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
   );
 
+DROP POLICY IF EXISTS "Couriers accept sub_trips" ON sub_trips;
 CREATE POLICY "Couriers accept sub_trips"
   ON sub_trips FOR UPDATE USING (
     EXISTS (SELECT 1 FROM driver_profiles WHERE id = auth.uid() AND role = 'courier')
   );
 
+DROP POLICY IF EXISTS "Admin manages sub_trips" ON sub_trips;
 CREATE POLICY "Admin manages sub_trips"
   ON sub_trips FOR ALL USING (
     EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
