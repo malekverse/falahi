@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { z } from 'zod'
+import { sanitizeText } from '@filahi/utils'
 
 const CreateDisputeSchema = z.object({
   tripId: z.string().uuid(),
   disputeType: z.enum(['cargo_theft', 'otp_failure', 'gps_loss', 'quality_issue', 'no_show', 'other']),
-  description: z.string().max(2000).optional(),
+  description: z.string().trim().max(2000).optional(),
 })
 
 export async function POST(req: Request) {
@@ -50,7 +51,7 @@ export async function POST(req: Request) {
       trip_id: tripId,
       raised_by: user.id,
       dispute_type: disputeType,
-      description: description || null,
+      description: description ? sanitizeText(description, 2000) : null,
     })
     .select()
     .single()

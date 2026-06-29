@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { z } from 'zod'
+import { sanitizeText } from '@filahi/utils'
 
 const ZoneCreateSchema = z.object({
-  name: z.string().min(2).max(100),
+  name: z.string().trim().min(2).max(100),
   coordinates: z.array(z.array(z.number())).min(3),
   hubId: z.string().uuid().nullable(),
 })
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
   })
 
   const { data, error } = await supabase.rpc('create_delivery_zone', {
-    zone_name: name,
+    zone_name: sanitizeText(name, 100),
     zone_boundary: polygonGeoJson,
     hub_id: hubId,
   })

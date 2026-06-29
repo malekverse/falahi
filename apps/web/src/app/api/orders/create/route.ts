@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { calculateCommission, calculateFinalPrice } from '@filahi/utils'
+import { calculateCommission, calculateFinalPrice, sanitizeText } from '@filahi/utils'
 import { OrderCreateSchema } from '@/lib/validation'
 
 export async function POST(request: NextRequest) {
@@ -57,8 +57,8 @@ export async function POST(request: NextRequest) {
       status: 'pending',
       total_price_millimes: totalMillimes + commissionMillimes,
       commission_millimes: commissionMillimes,
-      delivery_address: deliveryAddress,
-      delivery_notes: deliveryNotes,
+      delivery_address: deliveryAddress ? sanitizeText(deliveryAddress, 500) : undefined,
+      delivery_notes: deliveryNotes ? sanitizeText(deliveryNotes, 500) : undefined,
     }
 
     if (idempotencyKey) {

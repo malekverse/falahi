@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { sendWhatsAppMessage } from '@filahi/utils'
+import { sendWhatsAppMessage, sanitizeText } from '@filahi/utils'
 import { WhatsAppSendSchema } from '@/lib/validation'
 
 export async function POST(req: NextRequest) {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   const { to, message } = parsed.data
 
   try {
-    await sendWhatsAppMessage(to, message)
+    await sendWhatsAppMessage(to, sanitizeText(message, 4096))
     return NextResponse.json({ success: true })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })

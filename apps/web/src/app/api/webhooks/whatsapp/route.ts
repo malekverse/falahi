@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { verifyWebhookSignature, extractMessage } from '@filahi/utils'
 import { downloadMetaMedia, sendWhatsAppMessage, sendConfirmationButton } from '@filahi/utils'
 import { transcribeDarija, extractListingFromText, flagForAdminReview } from '@filahi/utils'
+import { sanitizeText } from '@filahi/utils'
 import { createClient } from '@supabase/supabase-js'
 import { BOT_MESSAGES } from '@filahi/utils'
 import type { AIListingExtraction } from '@filahi/types'
@@ -155,17 +156,17 @@ async function handleAudioMessage(waId: string, raw: Record<string, unknown>, ms
     .from('inventory_items')
     .insert({
       farmer_id: farmer.id,
-      product_name: extraction.product_name,
+      product_name: sanitizeText(extraction.product_name, 200),
       product_category: productCategory,
       quantity: extraction.quantity,
       unit: extraction.unit,
       asking_price_millimes: askingPriceMillimes,
-      location_name: extraction.location_name,
+      location_name: sanitizeText(extraction.location_name, 200),
       status: 'pending_confirmation',
-      raw_transcription: transcription.text,
+      raw_transcription: sanitizeText(transcription.text, 5000),
       ai_confidence_score: extraction.confidence_score,
       whatsapp_message_id: msgId,
-      notes: extraction.notes,
+      notes: extraction.notes ? sanitizeText(extraction.notes, 500) : null,
     })
     .select()
     .single()

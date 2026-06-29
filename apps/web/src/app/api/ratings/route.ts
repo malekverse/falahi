@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { z } from 'zod'
+import { sanitizeText } from '@filahi/utils'
 
 const RatingCreateSchema = z.object({
   orderId: z.string().uuid(),
@@ -8,7 +9,7 @@ const RatingCreateSchema = z.object({
   targetId: z.string().uuid(),
   targetType: z.enum(['driver', 'farmer', 'product']),
   score: z.number().int().min(1).max(5),
-  reviewText: z.string().max(1000).optional(),
+  reviewText: z.string().trim().max(1000).optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
       target_id: targetId,
       target_type: targetType,
       score,
-      review_text: reviewText,
+      review_text: reviewText ? sanitizeText(reviewText, 1000) : null,
     })
     .select()
     .single()
