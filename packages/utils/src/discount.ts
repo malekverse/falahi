@@ -5,9 +5,9 @@ export interface DiscountResult {
 }
 
 const DISCOUNT_TIERS = [
-  { hoursUntilExpiry: 24, percent: 10, label: '-10% (dernier jour)' },
-  { hoursUntilExpiry: 12, percent: 20, label: '-20% (dernières heures)' },
   { hoursUntilExpiry: 6, percent: 35, label: '-35% (très bientôt périmé)' },
+  { hoursUntilExpiry: 12, percent: 20, label: '-20% (dernières heures)' },
+  { hoursUntilExpiry: 24, percent: 10, label: '-10% (dernier jour)' },
   { hoursUntilExpiry: 0, percent: 0, label: '' },
 ]
 

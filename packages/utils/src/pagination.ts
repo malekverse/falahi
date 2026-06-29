@@ -33,7 +33,9 @@ export function encodeCursor(data: CursorData): string {
 export function decodeCursor(cursor: string): CursorData {
   const decoded = fromBase64(cursor)
   const sep = decoded.lastIndexOf('|')
-  return { createdAt: decoded.slice(0, sep), id: decoded.slice(sep + 1) }
+  const rawId = decoded.slice(sep + 1)
+  const numId = Number(rawId)
+  return { createdAt: decoded.slice(0, sep), id: Number.isFinite(numId) ? numId : rawId }
 }
 
 export function cursorResponse<T extends { created_at: string; id: number | string }>(
@@ -41,12 +43,18 @@ export function cursorResponse<T extends { created_at: string; id: number | stri
   limit: number,
 ): PageResult<T> {
   if (items.length === 0) return { items, nextCursor: null, hasMore: false }
-  const last = items[items.length - 1]
+  const hasMore = items.length > limit
+  const pageItems = hasMore ? items.slice(0, limit) : items
+  const last = hasMore ? items[limit] : items[items.length - 1]
   return {
-    items,
-    nextCursor: items.length >= limit ? encodeCursor({ createdAt: last.created_at, id: last.id }) : null,
-    hasMore: items.length >= limit,
+    items: pageItems,
+    nextCursor: hasMore ? encodeCursor({ createdAt: last.created_at, id: last.id }) : null,
+    hasMore,
   }
+}
+
+export function fetchLimit(limit: number): number {
+  return limit + 1
 }
 
 export function getOffset(params: PageParams): number {

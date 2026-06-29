@@ -119,5 +119,5 @@ export type {
 } from './routing'
 export { calculateDiscount } from './discount'
 export type { DiscountResult } from './discount'
-export { getOffset, offsetResponse, encodeCursor, decodeCursor, cursorResponse } from './pagination'
+export { getOffset, offsetResponse, encodeCursor, decodeCursor, cursorResponse, fetchLimit } from './pagination'
 export type { PageParams, PageResult, CursorData } from './pagination'

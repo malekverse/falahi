@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { decodeCursor, cursorResponse } from '@filahi/utils'
+import { decodeCursor, cursorResponse, fetchLimit } from '@filahi/utils'
 import { MarketplaceQuerySchema } from '@/lib/validation'
 
 const PAGE_LIMIT = 20
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     .eq('status', 'available')
     .order('created_at', { ascending: false })
     .order('id', { ascending: false })
-    .limit(PAGE_LIMIT)
+    .limit(fetchLimit(PAGE_LIMIT))
 
   if (cursorCreatedAt && cursorId) {
     query = query.or(
