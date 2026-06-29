@@ -199,3 +199,51 @@
 - ✅ Ledger data is already structured for Phase 2 automation
 - ⚠️ Admin manual work increases with volume — this is the forcing function to implement Phase 2 quickly
 - ⚠️ Trust risk: farmers must trust they'll receive payment. Mitigated by WhatsApp confirmation message sent after each trip settlement.
+
+---
+
+## ADR-013: Cursor-Based Pagination (Over Offset)
+
+**Status:** Accepted | **Date:** 2026-06-29
+
+**Context:** The marketplace listing API needs pagination that is stable under active writes. Using `OFFSET` would cause items to shift and create duplicates/skips when new listings are inserted while a buyer is browsing.
+
+**Decision:** Use cursor-based pagination with a composite cursor of `(created_at, id)`. The cursor is base64-encoded and decoded on the server. The query uses `.or(created_at.lt.{cursor}, and(created_at.eq.{cursor}, id.lt.{cursorId}))` for stable page boundaries. Retained `getOffset()` as a legacy export in `packages/utils` but all new code uses cursor-based.
+
+**Consequences:**
+- ✅ Stable across inserts — no duplicates or missed items
+- ✅ Works with Supabase's `.or()` filter natively
+- ⚠️ Cannot jump to arbitrary page number (unexpected UX for power users — acceptable for MVP)
+
+---
+
+## ADR-014: In-Memory Rate Limiting (No External Store)
+
+**Status:** Accepted | **Date:** 2026-06-29
+
+**Context:** The WhatsApp webhook needs rate limiting to prevent abuse. On Vercel's free tier, external stores (Redis/Upstash) add cost and complexity. Serverless functions may have multiple instances, making shared state unreliable.
+
+**Decision:** Use an in-memory `Map<string, {count, resetAt}>` rate limiter keyed by sender WhatsApp ID. Best-effort rate limiting — not guaranteed across cold starts or multiple instances, but effective enough for the MVP threat model (Meta API is the only sender, rate limiting per waId prevents a single farmer's phone from flooding).
+
+**Consequences:**
+- ✅ Zero infrastructure cost
+- ✅ No cold-start dependency
+- ⚠️ Rate limit resets on cold start (acceptable — Meta retries with backoff)
+- ⚠️ Not distributed — each Vercel instance has independent counters
+
+---
+
+## ADR-015: Vercel Cron Jobs Over Supabase pg_cron
+
+**Status:** Accepted | **Date:** 2026-06-29
+
+**Context:** Three scheduled tasks are needed: expire stale listings, alert on stale trips, process recurring orders. Supabase's pg_cron extension requires Docker and the Business tier ($25/mo+). Vercel Cron Jobs are free on the Hobby plan.
+
+**Decision:** Write the scheduled logic as Supabase RPC functions (PostgreSQL, SECURITY DEFINER) and call them from Vercel Cron Jobs via HTTP endpoints. The cron endpoints are protected by a shared `CRON_SECRET` Bearer token. Vercel's `vercel.json` defines the schedules.
+
+**Consequences:**
+- ✅ Zero additional cost on Vercel Hobby plan
+- ✅ All logic is still in the database (idempotent SQL functions)
+- ✅ Simple to test: just HTTP GET with auth header
+- ⚠️ Requires `CRON_SECRET` env var in Vercel dashboard
+- ⚠️ 60-second Vercel function timeout could be tight for large batches — mitigated by `maxDuration: 60` and idempotent RPCs
