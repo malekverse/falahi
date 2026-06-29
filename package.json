@@ -5,6 +5,7 @@
   "scripts": {
     "dev:web": "pnpm --filter web dev",
     "dev:driver": "pnpm --filter driver start",
+    "build": "pnpm --filter web build",
     "build:web": "pnpm --filter web build",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
