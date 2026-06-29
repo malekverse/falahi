@@ -8,15 +8,21 @@ export default function LoginPage() {
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
   const [step, setStep] = useState<'phone' | 'otp'>('phone')
+  const [channel, setChannel] = useState<'sms' | 'whatsapp'>('sms')
   const [loading, setLoading] = useState(false)
   const { t } = useTranslation()
 
   const supabase = createClient()
 
-  async function sendOtp() {
+  function normalizePhone(raw: string) {
+    return `+216${raw.replace(/^\+216/, '').replace(/^00216/, '')}`
+  }
+
+  async function sendSmsOtp() {
+    setChannel('sms')
     setLoading(true)
     const { error } = await supabase.auth.signInWithOtp({
-      phone: `+216${phone.replace(/^\+216/, '')}`,
+      phone: normalizePhone(phone),
     })
     setLoading(false)
 
@@ -27,10 +33,35 @@ export default function LoginPage() {
     setStep('otp')
   }
 
-  async function verifyOtp() {
+  async function sendWhatsAppOtp() {
+    setChannel('whatsapp')
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/auth/send-whatsapp-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: normalizePhone(phone) }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error || 'Failed to send code')
+        return
+      }
+
+      setStep('otp')
+    } catch {
+      alert('Network error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function verifySmsOtp() {
     setLoading(true)
     const { error } = await supabase.auth.verifyOtp({
-      phone: `+216${phone.replace(/^\+216/, '')}`,
+      phone: normalizePhone(phone),
       token: otp,
       type: 'sms',
     })
@@ -41,6 +72,30 @@ export default function LoginPage() {
       return
     }
     window.location.href = '/marketplace'
+  }
+
+  async function verifyWhatsAppOtp() {
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/auth/verify-whatsapp-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: normalizePhone(phone), otp }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error || 'Invalid code')
+        return
+      }
+
+      window.location.href = data.redirect || '/marketplace'
+    } catch {
+      alert('Network error')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -60,29 +115,40 @@ export default function LoginPage() {
               placeholder="20 123 456"
               className="mb-4 w-full rounded border border-gray-300 px-3 py-2"
             />
+
             <button
-              onClick={sendOtp}
+              onClick={sendSmsOtp}
               disabled={loading || phone.length < 8}
               className="w-full rounded bg-green-600 px-4 py-2 text-white disabled:opacity-50"
             >
-              {loading ? t.login.sending : t.login.sendCode}
+              {loading && channel === 'sms' ? t.login.sending : t.login.sendCode}
+            </button>
+
+            <div className="my-3 text-center text-sm text-gray-400">{t.login.or}</div>
+
+            <button
+              onClick={sendWhatsAppOtp}
+              disabled={loading || phone.length < 8}
+              className="w-full rounded bg-green-500 px-4 py-2 text-white disabled:opacity-50"
+            >
+              {loading && channel === 'whatsapp' ? t.login.sending : t.login.sendViaWhatsApp}
             </button>
           </>
         ) : (
           <>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              {t.login.enterCode}
+              {channel === 'sms' ? t.login.enterCode : t.login.enterWhatsAppCode}
             </label>
             <input
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              placeholder="123456"
+              placeholder="000000"
               maxLength={6}
               className="mb-4 w-full rounded border border-gray-300 px-3 py-2"
             />
             <button
-              onClick={verifyOtp}
+              onClick={channel === 'sms' ? verifySmsOtp : verifyWhatsAppOtp}
               disabled={loading || otp.length < 4}
               className="w-full rounded bg-green-600 px-4 py-2 text-white disabled:opacity-50"
             >

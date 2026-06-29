@@ -49,10 +49,13 @@ export const ar: Translations = {
   login: {
     title: 'تسجيل الدخول',
     phoneNumber: 'رقم الهاتف',
-    sendCode: 'استلام الرمز',
-    enterCode: 'الرمز المستلم',
+    sendCode: 'استلام الرمز عبر SMS',
+    sendViaWhatsApp: 'استلام الرمز عبر واتساب',
+    enterCode: 'الرمز المستلم عبر SMS',
+    enterWhatsAppCode: 'الرمز المستلم عبر واتساب',
     verify: 'دخول',
     sending: 'جاري الإرسال...',
     verifying: 'جاري التحقق...',
+    or: 'أو',
   },
 }

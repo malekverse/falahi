@@ -48,9 +48,12 @@ export interface Translations {
     title: string
     phoneNumber: string
     sendCode: string
+    sendViaWhatsApp: string
     enterCode: string
+    enterWhatsAppCode: string
     verify: string
     sending: string
     verifying: string
+    or: string
   }
 }

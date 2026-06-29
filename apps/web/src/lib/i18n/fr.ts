@@ -49,10 +49,13 @@ export const fr: Translations = {
   login: {
     title: 'Connexion',
     phoneNumber: 'Numéro de téléphone',
-    sendCode: 'Recevoir le code',
+    sendCode: 'Recevoir le code par SMS',
+    sendViaWhatsApp: 'Recevoir le code par WhatsApp',
     enterCode: 'Code reçu par SMS',
+    enterWhatsAppCode: 'Code reçu par WhatsApp',
     verify: 'Se connecter',
     sending: 'Envoi...',
     verifying: 'Vérification...',
+    or: 'ou',
   },
 }
