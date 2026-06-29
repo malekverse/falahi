@@ -1,6 +1,28 @@
 # Session Log
 
-## 2026-06-29 — Enhancement Mode Sprint 2
+## 2026-06-29 — Enhancement Mode Sprint 2 (continuation)
+
+### Enhancement Items Implemented in This Session
+- **Vercel build fix**: removed infinite postinstall loop in driver app (caused OOM), added root `vercel.json` scoping build to web only, merged cron schedules
+- **Haptic feedback**: added `notificationAsync('success')` on trip acceptance and arrived-at-hub in driver `TripDetailScreen.tsx`
+- **Image URL column**: migration `011_add_image_url.sql` adds `image_url` to `inventory_items`; updated `InventoryItem` type and `DATA_MODELS.md`
+- **Input sanitization**: all 7 API routes with user text input now sanitize via `sanitizeText()` before DB insert (orders, disputes, ratings, zones, send-whatsapp, WhatsApp webhook). Added `.trim()` to all Zod 4 string schemas.
+
+### Verified Already Implemented
+- Pull-to-refresh: both `HomeScreen` and `HistoryScreen` in driver app (RefreshControl)
+- Haptic OTP feedback: already present on pickup/delivery OTP validation in `TripDetailScreen`
+- Idempotency keys: `crypto.randomUUID()` → `idempotencyKey` param → `orders.id` dedup, full end-to-end
+- Printer-friendly invoice: `invoices/[id]/page.tsx` with `print.css` (`@media print`)
+- Alt text on images: single `<img>` in `ListingCard.tsx` has `alt={productName}`; emoji placeholder has `aria-hidden`
+- Product photo component: `ProductImage` in `ListingCard.tsx` handles both `imageUrl` (with lazy loading) and emoji fallback
+- Input sanitization utility (`sanitizeText`) existed in `@filahi/utils` but was never imported — now fixed
+
+### All Enhancement Mode Items — Final Status
+All ROADMAP phases are complete. All Enhancement Mode items are either:
+- **Done**: all performance, UX, reliability, feature, security, and accessibility items
+- **Blocked externally**: WA templates (Meta token), DB backup (Docker/secrets), RLS audit (MCP auth)
+- **Skip (farmer app doesn't exist)**: virtual scrolling, image compression, onboarding, dark mode
+- **Skip (needs physical device)**: TalkBack screen reader test
 
 ### Enhancement Items Implemented
 - **Health check endpoint** (`/api/health`): verifies Supabase connectivity, returns latency
