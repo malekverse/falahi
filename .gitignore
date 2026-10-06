@@ -13,3 +13,7 @@ credentials.json
 opencode.json
 backups/
 # ctx7sk-9c559c92-31b6-4b6f-af40-de4071e75e94
+# local assistant files
+AGENTS.md
+CLAUDE.md
+.claude/
